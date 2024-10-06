@@ -38,6 +38,7 @@ DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 ALLOWED_HOSTS = [
     'localhost',
     'localhost:3000',
+    'engsol-django-render.onrender.com',    
 ]
 
 

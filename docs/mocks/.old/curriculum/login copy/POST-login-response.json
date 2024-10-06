@@ -1,0 +1,8 @@
+{
+	"message": "Login realizado com sucesso",
+	"payload": {
+		"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.5txvinAgrSuzQbcHP2roE54Gpt15sBx-N-nS7E9aXI8",
+		"expiry_timestamp": 1714108743,
+		"user_id": 1
+	}
+}

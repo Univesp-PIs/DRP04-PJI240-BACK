@@ -7,9 +7,8 @@ from django.core import serializers
 from django.shortcuts import get_object_or_404
 from django.utils.crypto import get_random_string
 
-# Criar novo projeto
 @csrf_exempt
-def create_project(request, id):
+def create(request, id):
     if request.method == 'POST':
         try:
                         
