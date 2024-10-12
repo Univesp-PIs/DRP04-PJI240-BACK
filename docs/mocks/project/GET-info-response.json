@@ -1,70 +1,42 @@
 {
-	"user": {
-		"name": "Teste1",
-		"title": "Profissão",
-		"email": "email@email.com",
-		"phone": "999999999",
-		"location": "Cidade/Estado",
-		"avatar": "Icon1",
-		"gender": "Masculino",
-		"pronoun": "Ele/Dele",
-		"description": "Resumo sobre a pessoa",
-		"accessLevel": "Private",
-		"published": false,
-		"created_at": "2024-04-25T05:19:12.176Z",
-		"updated_at": "2024-04-25T05:19:25.048Z",
-		"key": "pBnJuYqGZ9MfwVmEsaYK",
-		"id": 1
+	"project": {
+	  "id": 1,
+	  "name": "Teste Projeto",
+	  "key": "xnbh364#a8&"
 	},
-	"links": [
-		{
-			"name": "Nome do link3",
-			"url": "http://www.link.com"
-		}
-	],
-	"experience": [
-		{
-			"company": "Nome da empresa",
-			"position": "Cargo",
-			"period": "Data de início - Data de fim",
-			"description": "Descrição das atividades"
-		}
-	],
-	"education": [
-		{
-			"institution": "Nome da instituição",
-			"course": "Curso",
-			"period": "Data de início - Data de fim",
-			"description": "Descrição das atividades"
-		}
-	],
-	"skills": [
-		"skill1",
-		"skill2",
-		"skill3"
-	],
-	"Custom": [
-		{
-			"title": "Titulo customizado",
-			"description": "Descrição customizada",
-			"topicType": {
-				"type": "Graphic",
-				"description": "Descrição customizada",
-				"percentage": 25.0,
-				"color": "#000000"
-			}
-		},
-		{
-			"title": "Titulo customizado",
-			"description": "Descrição customizada",
-			"topicType": {
-				"type": "Topic",
-				"topics": [
-					"topic1",
-					"topic2",
-					"topic3"
-				]
-			}
-		}
+	"client": {
+		"id": 1,
+		"name": "Teste Cliente",
+		"email": "teste@email.com"
+	},
+	"timeline": [
+	  {
+		"id": 1,
+		"name": "Teste Status 1",
+		"rank": 1,
+		"last_update": "01/01/2024",
+		"status": "done"
+	  },
+	  {
+		"id": 2,
+		"name": "Teste Status 2",
+		"rank": 3,
+		"last_update": "02/02/2024",
+		"status": "pending"
+	  },
+	  {
+		"id": 3,
+		"name": "Teste Status Novo 1",
+		"rank": 4,
+		"last_update": "03/03/2024",
+		"status": "in_progress"
+	  },
+	  {
+		"id": 4,
+		"name": "Teste Status Novo 2",
+		"rank": 2,
+		"last_update": "04/04/2024",
+		"status": "cancelled"
+	  }
 	]
 }

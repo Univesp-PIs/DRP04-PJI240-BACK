@@ -1,65 +1,31 @@
 {
-  "id": 1,
-  "user": {
-    "name": "Teste2",
-    "title": "Profissão",
-    "email": "email@email.com",
-    "phone": "999999999",
-    "location": "Cidade/Estado",
-    "avatar": "Icon1",
-    "gender": "Masculino",
-    "pronoun": "Ele/Dele",
-		"description": "Resumo sobre a pessoa"
+  "project": {
+    "name": "Teste Projeto"
   },
-  "links": [
+  "client": {
+      "name": "Teste Cliente",
+      "email": "teste@email.com"
+  },
+  "timeline": [
     {
-      "name": "Nome do link",
-      "url": "http://www.link.com"
-    }
-  ],
-  "experience": [
-    {
-      "company": "Nome da empresa",
-      "position": "Cargo",
-      "period": "Data de início - Data de fim",
-      "description": "Descrição das atividades"
-    }
-  ],
-  "education": [
-    {
-      "institution": "Nome da instituição",
-      "course": "Curso",
-      "period": "Data de início - Data de fim",
-      "description": "Descrição das atividades"
-    }
-  ],
-  "skills": [
-    "skill1",
-    "skill2",
-    "skill3"
-  ],
-  "Custom": [
-    {
-      "title": "Titulo customizado",
-      "description": "Descrição customizada",
-      "topicType": {
-        "type": "graphic",
-        "description": "Descrição do gráfico",
-        "percentage": 25,
-        "color": "#000000"
-      }
+      "id": 1,
+      "name": "Teste Status 1",
+      "rank": 1
     },
     {
-      "title": "Titulo customizado",
-      "description": "Descrição customizada",
-      "topicType": {
-        "type": "topics",
-        "topics": [
-          "topic1",
-          "topic2",
-          "topic3"
-        ]
-      }
+      "id": 2,
+      "name": "Teste Status 2",
+      "rank": 2
+    },
+    {
+      "id": 0,
+      "name": "Teste Status Novo 1",
+      "rank": 3
+    },
+    {
+      "id": 0,
+      "name": "Teste Status Novo 2",
+      "rank": 4
     }
   ]
 }

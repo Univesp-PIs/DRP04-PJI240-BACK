@@ -9,7 +9,7 @@ from django.utils.crypto import get_random_string
 
 # Criar novo projeto
 @csrf_exempt
-def create_project(request, id):
+def create_project(request):
 
     # Informa o metodo
     if request.method == 'POST':
@@ -20,91 +20,60 @@ def create_project(request, id):
             # Carregar dados do request
             data = json.loads(request.body.decode('utf-8'))
 
-            # Carregar dados da timeline
-            timeline_data = data['timeline']
+            # Carregar dados das repartições do json
+            project = data['project']
+            client = data['client']
+            timeline = data['timeline']
 
             # Inserir dados do projeto
             project = Project.objects.create(
-                report_id = data['project_report'],
-                name = data['project_name'],
-                description = data['project_description'],
-                key=get_random_string(length=20),
+                name = project['name'],
+                key=get_random_string(length=20)
             )
 
             # Inserir dados do cliente
             client = Client.objects.create(
-                name = data['client_name'],
-                email = data['client_email'],
-                phone = data['client_phone'],
-                address = data['client_address'],
-                gender = data['client_gender']
-            )
-
-            # Inserir dados do status
-            status = Status.objects.create(
-                name = data['status_name'],
-                description = data['status_description'],
-                project = project
-            )
-
-            # Inserir dados do usuário
-            user_data = data['user']
-            user = User.objects.create(
-                name=user_data['name'],
-                title=user_data['title'],
-                email=user_data['email'],
-                phone=user_data['phone'],
-                location=user_data['location'],
-                avatar=user_data['avatar'],
-                gender=user_data['gender'],
-                pronoun=user_data['pronoun'],
-                description=user_data['description'],
-                credential_id=credential_id,
-                key=get_random_string(length=20),
-                access_level=user_data['access_level'],
-                published=user_data['published']
+                name = client['name'],
+                email = client['email']
             )
             
-            # Crie os links
-            for link_data in data.get('links', []):
-                Link.objects.create(user=user, **link_data)
+            # Crie os tópicos da timeline
+            for timeline_count in timeline:
 
-            # Crie as experiências
-            for exp_data in data.get('experience', []):
-                Experience.objects.create(user=user, **exp_data)
+                # Buscar o id
+                status_id = timeline_count.get('id', 0)
 
-            # Crie as educações
-            for edu_data in data.get('education', []):
-                Education.objects.create(user=user, **edu_data)
+                # Verificar se precisa criar novo status
+                if status_id == 0:
 
-            # Crie as habilidades
-            for skill_name in data.get('skills', []):
-                Skill.objects.create(user=user, **skill_name)
-
-            # Crie os tópicos personalizados
-            for custom_data in data.get('Custom', []):
-                topic_type = custom_data.get('topicType', {})
-                if topic_type.get('type') == 'graphic':
-                    Graphic.objects.create(
-                        user=user,
-                        title=custom_data.get('title', ''),
-                        description=custom_data.get('description', ''),
-                        percentage=topic_type.get('percentage', 0),
-                        color=topic_type.get('color', '')
+                    # Inserir dados do status
+                    status = Status.objects.create(
+                        name = timeline_count['name']
                     )
-                elif topic_type.get('type') == 'topics':
-                    Topic.objects.create(
-                        user=user,
-                        title=custom_data.get('title', ''),
-                        description=custom_data.get('description', ''),
-                        topics=topic_type.get('topics', [])
+
+                else:
+
+                    # Atualizar dados do status
+
+                    #status = get_object_or_404(Status, id=status_id)
+                    #status.name = timeline_count['name']
+                    #status.save()
+
+                    status = Status.objects.filter(id = status_id).update(
+                        name = timeline_count['name']
                     )
+                    status.save()
+
+                # Inserir dados do ranking
+                Ranking.objects.create(
+                    project_id = project,
+                    status_id = status,
+                    rank = timeline_count['rank']
+                )
 
             # Retorne uma resposta de sucesso
             response_data = {
-                'message': 'Criado com sucesso',
-                'user_id': user.id,
-                'user_key': user.key
+                'message': 'Prjeto criado com sucesso'
             }
 
             # Retorne uma resposta de sucesso
@@ -117,9 +86,125 @@ def create_project(request, id):
     # Se não for um request POST, retorne um erro de método não permitido
     return JsonResponse({'error': 'Método não permitido'}, status=405)
 
+@csrf_exempt
+def upadate_project(request):
+
+    # Informa o metodo
+    if request.method == 'POST':
+
+        try:
+            # Carregar dados do request
+            data = json.loads(request.body.decode('utf-8'))
+
+            # Carregar dados das repartições do json
+            project_data = data['project']
+            client_data = data['client']
+            timeline = data['timeline']
+
+            # Atualizar dados do projeto
+            project = get_object_or_404(Project, id=project_data['id'])
+            project.name = project_data['name']
+            project.save()
+
+            # Atualizar dados do cliente
+            client = get_object_or_404(Client, id=client_data['id'])
+            client.name = client_data['name']
+            client.email = client_data['email']
+            client.save()
+
+            # Atualizar ou criar dados da timeline (status e ranking)
+            for timeline_item in timeline:
+
+                # Verificar se o status já existe
+                status_id = timeline_item.get('id', 0)
+                if status_id == 0:
+                    # Criar novo status
+                    status = Status.objects.create(
+                        name=timeline_item['name']
+                    )
+                else:
+                    # Atualizar status existente
+                    status = get_object_or_404(Status, id=status_id)
+                    status.name = timeline_item['name']
+                    status.save()
+
+                # Verificar se o ranking já existe para o status e projeto
+                ranking, created = Ranking.objects.get_or_create(
+                    project_id=project,
+                    status_id=status
+                )
+
+                # Atualizar os dados do ranking
+                ranking.rank = timeline_item['rank']
+                ranking.status = timeline_item['status']  
+                ranking.last_update = timeline_item['last_update']  
+                ranking.save()
+
+            # Retornar uma resposta de sucesso
+            response_data = {
+                'message': 'Projeto atualizado com sucesso'
+            }
+
+            return JsonResponse(response_data)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+@csrf_exempt
+def list_details(request, project_id):
+
+    # Informa o metodo
+    if request.method == 'GET':
+
+        try:
+            # Buscar o projeto pelo ID
+            project = get_object_or_404(Project, id=project_id)
+
+            # Buscar o cliente associado ao projeto
+            client = Client.objects.filter(id=project.id)
+
+            # Buscar o ranking associado ao projeto
+            rankings = Ranking.objects.filter(project_id=project)
+
+            # Criar a lista da timeline
+            timeline = []
+            for ranking in rankings:
+                timeline.append({
+                    'id': ranking.status_id.id,
+                    'name': ranking.status_id.name,
+                    'rank': ranking.rank,
+                    'last_update': ranking.last_update.strftime('%d/%m/%Y'),  # Formatação da data
+                })
+
+            # Montar o objeto de resposta
+            response_data = {
+                'project': {
+                    'id': project.id,
+                    'name': project.name,
+                    'key': project.key,
+                },
+                'client': {
+                    'id': client.id,
+                    'name': client.name,
+                    'email': client.email,
+                },
+                'timeline': timeline
+            }
+
+            return JsonResponse(response_data)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+# ----------------------------------------------- OLD CODE -----------------------------------------------
+
 # Atualizar dados do projeto
 @csrf_exempt
-def update_key(request, id):
+def update_project(request):
 
     # Informar o metodo
     if request.method == 'PUT':
@@ -322,7 +407,7 @@ def update_key(request, id):
 
 # Deletar projeto
 @csrf_exempt
-def delete_key(request, id):
+def delete_project(request):
 
     # Informar o metodo
     if request.method == 'DELETE':
@@ -391,7 +476,7 @@ def delete_key(request, id):
 
 # Listar dados do projeto
 @csrf_exempt
-def list_key(request, id):
+def list_project(request):
 
     # Informar o metodo
     if request.method == 'GET':
