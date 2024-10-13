@@ -34,12 +34,12 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
-#ALLOWED_HOSTS = [os.getenv("ALLOWED_HOSTS").split(",")]
-ALLOWED_HOSTS = [
-    'localhost',
-    'localhost:3000',
-    'engsol-django-render.onrender.com',    
-]
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",")
+#ALLOWED_HOSTS = [
+#    'localhost',
+#    'localhost:3000',
+#    'engsol-django-render.onrender.com',    
+#]
 
 
 # Application definition
@@ -106,7 +106,10 @@ DATABASES = {
         # Host do banco de dados (no caso, 'localhost')                       
         'HOST': os.getenv("DATABASE_HOST"),
         # Porta do banco de dados (opcional, padrão para MySQL é 3306)                   
-        'PORT': os.getenv("DATABASE_PORT") 
+        'PORT': os.getenv("DATABASE_PORT"),
+        'OPTIONS': {
+            'sslmode': 'require',  # Adiciona esta linha para garantir conexão SSL
+        },
     }
 }
 
