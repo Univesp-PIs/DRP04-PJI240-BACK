@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from account.models import Credential
-from .models import Project, Client, Status, Report, Ranking
+from .models import Project, Client, Status, Ranking
 from django.core import serializers
 from django.shortcuts import get_object_or_404
 from django.utils.crypto import get_random_string
@@ -87,7 +87,7 @@ def create_project(request):
     return JsonResponse({'error': 'Método não permitido'}, status=405)
 
 @csrf_exempt
-def upadate_project(request):
+def update_project(request):
 
     # Informa o metodo
     if request.method == 'POST':
@@ -153,7 +153,7 @@ def upadate_project(request):
     return JsonResponse({'error': 'Método não permitido'}, status=405)
 
 @csrf_exempt
-def list_details(request, project_id):
+def list_project(request, project_id):
 
     # Informa o metodo
     if request.method == 'GET':
@@ -194,6 +194,31 @@ def list_details(request, project_id):
             }
 
             return JsonResponse(response_data)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+@csrf_exempt
+def delete_project(request, project_id):
+
+    # Informar o metodo
+    if request.method == 'DELETE':
+
+        try:
+            
+            # Buscar o projeto pelo ID
+            project = get_object_or_404(Project, id=project_id)
+
+            # Deletar todos os rankings associados ao projeto
+            Ranking.objects.filter(project_id=project).delete()
+
+            # Deletar o projeto
+            project.delete()
+
+            # Resposta de sucesso
+            return JsonResponse({'message': 'Projeto e rankings deletados com sucesso'}, status=200)
 
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)

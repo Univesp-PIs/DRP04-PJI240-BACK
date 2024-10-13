@@ -1,5 +1,5 @@
 from django.db import models
-from account.models import Account
+from account.models import Credential
 
 # Create your models here.
 

@@ -11,9 +11,9 @@ urlpatterns = [
     path('list_project/<int:id>', views.list_project, name='list_project'),
 
     # Status
-    path('create_status/<int:id>', views.create_status, name='create_status'),
-    path('update_status/<int:id>', views.update_status, name='update_status'),
-    path('delete_status/<int:id>', views.delete_status, name='delete_status'),
-    path('info_status/<int:id>', views.info_status, name='info_status')
+    #path('create_status/<int:id>', views.create_status, name='create_status'),
+    #path('update_status/<int:id>', views.update_status, name='update_status'),
+    #path('delete_status/<int:id>', views.delete_status, name='delete_status'),
+    #path('info_status/<int:id>', views.info_status, name='info_status')
     
 ]
