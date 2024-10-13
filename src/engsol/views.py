@@ -204,7 +204,7 @@ def list_details(request, project_id):
 
 # Atualizar dados do projeto
 @csrf_exempt
-def update_project(request):
+def update_project2(request):
 
     # Informar o metodo
     if request.method == 'PUT':
@@ -407,7 +407,7 @@ def update_project(request):
 
 # Deletar projeto
 @csrf_exempt
-def delete_project(request):
+def delete_project2(request):
 
     # Informar o metodo
     if request.method == 'DELETE':
@@ -476,7 +476,7 @@ def delete_project(request):
 
 # Listar dados do projeto
 @csrf_exempt
-def list_project(request):
+def list_project2(request):
 
     # Informar o metodo
     if request.method == 'GET':
