@@ -1,0 +1,31 @@
+{
+  "project": {
+    "name": "Teste Projeto"
+  },
+  "client": {
+      "name": "Teste Cliente",
+      "email": "teste@email.com"
+  },
+  "timeline": [
+    {
+      "id": 1,
+      "name": "Teste Status 1",
+      "rank": 1
+    },
+    {
+      "id": 2,
+      "name": "Teste Status 2",
+      "rank": 2
+    },
+    {
+      "id": 0,
+      "name": "Teste Status Novo 1",
+      "rank": 3
+    },
+    {
+      "id": 0,
+      "name": "Teste Status Novo 2",
+      "rank": 4
+    }
+  ]
+}
