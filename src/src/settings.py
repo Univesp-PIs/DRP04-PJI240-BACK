@@ -93,12 +93,10 @@ WSGI_APPLICATION = 'src.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# Carregar as variáveis de ambiente do arquivo.env
-database_url = os.getenv("DATABASE_URL")
-
 DATABASES = {
     'default': 
-        dj_database_url.parse(os.getenv("DATABASE_URL"), conn_max_age=600, ssl_require=True)
+        dj_database_url.parse(os.getenv("DATABASE_URL"))
+        #dj_database_url.parse(os.getenv("DATABASE_URL"), conn_max_age=600, ssl_require=True)
         #{
 #        # Altera o motor de banco de dados para MySQL
 #        'ENGINE': os.getenv('DATABASE_ENGINE'), 

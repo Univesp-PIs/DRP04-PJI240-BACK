@@ -1,28 +1,20 @@
 from django import forms
-from .models import User, Link, Experience, Education, Skill
+from .models import Project, Client, Ranking
 
-# Create your forms here
-class UserForm(forms.ModelForm):
+# Formulário para o modelo Project
+class ProjectForm(forms.ModelForm):
     class Meta:
-        model = User
-        fields = '__all__'
+        model = Project
+        fields = ['name', 'description', 'start_date', 'end_date']  # Ajuste os campos conforme o seu modelo
 
-class LinkForm(forms.ModelForm):
+# Formulário para o modelo Client
+class ClientForm(forms.ModelForm):
     class Meta:
-        model = Link
-        exclude = ['user']
+        model = Client
+        fields = ['name', 'email', 'phone_number']  # Ajuste os campos conforme o seu modelo
 
-class ExperienceForm(forms.ModelForm):
+# Formulário para o modelo Ranking
+class RankingForm(forms.ModelForm):
     class Meta:
-        model = Experience
-        exclude = ['user']
-
-class EducationForm(forms.ModelForm):
-    class Meta:
-        model = Education
-        exclude = ['user']
-
-class SkillForm(forms.ModelForm):
-    class Meta:
-        model = Skill
-        exclude = ['user']
+        model = Ranking
+        fields = ['name', 'rank', 'project', 'status']  # Ajuste os campos conforme o seu modelo
