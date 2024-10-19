@@ -1,19 +1,19 @@
 from django.db import models
 from account.models import Credential
 
-# Projeto
-class Project(models.Model):
-    name = models.CharField(max_length=100)
-    key = models.CharField(max_length=20)
-    client = models.ForeignKey('Client', on_delete=models.CASCADE)  # Relacionamento com Client
-    status = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
 # Cliente
 class Client(models.Model):
     name = models.CharField(max_length=100)
     email = models.CharField(max_length=100)
+    status = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# Projeto
+class Project(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    key = models.CharField(max_length=20)
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
