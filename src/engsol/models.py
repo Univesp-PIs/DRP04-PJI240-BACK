@@ -18,8 +18,8 @@ class Project(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-# Status
-class Status(models.Model):
+# Condition
+class Condition(models.Model):
     name = models.CharField(max_length=100)
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -28,7 +28,7 @@ class Status(models.Model):
 # Ranking
 class Ranking(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    status = models.ForeignKey(Status, on_delete=models.CASCADE)
+    condition = models.ForeignKey(Condition, on_delete=models.CASCADE)
     rank = models.CharField(max_length=100)
     last_update = models.DateTimeField(auto_now=True)
     status = models.BooleanField(default=True)

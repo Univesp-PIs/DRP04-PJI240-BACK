@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from account.models import Credential
-from .models import Project, Client, Status, Ranking
+from .models import Project, Client, Condition, Ranking
 from django.core import serializers
 from django.shortcuts import get_object_or_404
 from django.utils.crypto import get_random_string
@@ -41,25 +41,26 @@ def create_project(request):
             for timeline_item in timeline:
 
                 # Carregar dados do status
-                status_id = timeline_item.get('id', 0)
+                condition_id = timeline_item.get('id', 0)
 
-                if status_id == 0:
-                    
-                    # Criar novo status
-                    status = Status.objects.create(
+                if condition_id == 0:
+
+                    # Criar novo condition
+                    condition = Condition.objects.create(
                         name=timeline_item['name']
                     )
 
                 else:
-                    # Atualizar status existente
-                    status = Status.objects.get(id=status_id)
-                    status.name = timeline_item['name']
-                    status.save()
+
+                    # Atualizar condition existente
+                    condition = Condition.objects.get(id=condition_id)
+                    condition.name = timeline_item['name']
+                    condition.save()
 
                 # Inserir dados do ranking
                 Ranking.objects.create(
                     project=project,
-                    status=status,
+                    condition=condition,
                     rank=timeline_item['rank']
                 )
 
@@ -106,26 +107,28 @@ def update_project(request):
 
             # Atualizar ou criar dados da timeline (status e ranking)
             for timeline_item in timeline:
-                status_id = timeline_item.get('id')
+
+                # Carregar dados do status
+                condition_id = timeline_item.get('id', 0)
 
                 # Verifica se existe status
-                if not status_id:
+                if condition_id == 0:
 
                     # Criar novo status
-                    status = Status.objects.create(
+                    condition = Condition.objects.create(
                         name=timeline_item['name']
                     )
 
                 else:
                     # Atualizar status existente
-                    status = get_object_or_404(Status, id=status_id)
-                    status.name = timeline_item['name']
-                    status.save()
+                    condition = get_object_or_404(Condition, id=condition_id)
+                    condition.name = timeline_item['name']
+                    condition.save()
 
                 # Atualizar ou criar o ranking
                 ranking, created = Ranking.objects.get_or_create(
                     project=project,
-                    status=status
+                    condition=condition
                 )
 
                 ranking.rank = timeline_item['rank']
@@ -169,8 +172,8 @@ def list_project(request, project_id):
             # Preenche a lista da timeline com dados dos rankings
             for ranking in rankings:
                 timeline.append({
-                    'id': ranking.status.id,
-                    'name': ranking.status.name,
+                    'id': ranking.condition.id,
+                    'name': ranking.condition.name,
                     'rank': ranking.rank,
                     'last_update': ranking.last_update.strftime('%d/%m/%Y')
                 })
