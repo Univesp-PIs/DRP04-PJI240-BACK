@@ -106,16 +106,15 @@ DATABASES = {
         # Host do banco de dados (no caso, 'localhost')                       
         'HOST': os.getenv("DATABASE_HOST"),
         # Porta do banco de dados (opcional, padrão para MySQL é 3306)                   
-        'PORT': os.getenv("DATABASE_PORT"),
-        'OPTIONS': {
-            'sslmode': 'require',  # Adiciona esta linha para garantir conexão SSL
-        },
+        'PORT': os.getenv("DATABASE_PORT")
     }
 }
 
 #ISSO
 database_url = os.getenv("DATABASE_URL")
-DATABASES['default'] = dj_database_url.parse(database_url)
+#DATABASES['default'] = dj_database_url.parse(database_url)
+DATABASES['default'] = dj_database_url.parse(os.getenv("DATABASE_URL"), conn_max_age=600, ssl_require=True)
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
