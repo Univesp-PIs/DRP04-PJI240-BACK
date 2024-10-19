@@ -11,77 +11,89 @@ from django.utils.crypto import get_random_string
 @csrf_exempt
 def create_project(request):
 
-    # Definir metodo
+    # Informa o metodo
     if request.method == 'POST':
-
+        
+        # TryCath
         try:
 
-            # Carregar dados do json
+            # Carregar dados do request
             data = json.loads(request.body.decode('utf-8'))
 
             # Carregar dados das repartições do json
-            project_data = data['project']
-            client_data = data['client']
+            project = data['project']
+            client = data['client']
             timeline = data['timeline']
-
-            # Inserir dados do cliente
-            client = Client.objects.create(
-                name=client_data['name'],
-                email=client_data['email']
-            )
 
             # Inserir dados do projeto
             project = Project.objects.create(
-                name=project_data['name'],
-                key=get_random_string(length=20),
-                client=client
+                name = project['name'],
+                key=get_random_string(length=20)
             )
 
-            # Criar status e rankings na timeline
-            for timeline_item in timeline:
-                status_id = timeline_item.get('id')
+            # Inserir dados do cliente
+            client = Client.objects.create(
+                name = client['name'],
+                email = client['email']
+            )
+            
+            # Crie os tópicos da timeline
+            for timeline_count in timeline:
 
-                if not status_id:
-                    # Criar novo status
+                # Buscar o id
+                status_id = timeline_count.get('id', 0)
+
+                # Verificar se precisa criar novo status
+                if status_id == 0:
+
+                    # Inserir dados do status
                     status = Status.objects.create(
-                        name=timeline_item['name']
+                        name = timeline_count['name']
                     )
+
                 else:
-                    # Atualizar status existente
-                    status = Status.objects.get(id=status_id)
-                    status.name = timeline_item['name']
+
+                    # Atualizar dados do status
+
+                    #status = get_object_or_404(Status, id=status_id)
+                    #status.name = timeline_count['name']
+                    #status.save()
+
+                    status = Status.objects.filter(id = status_id).update(
+                        name = timeline_count['name']
+                    )
                     status.save()
 
                 # Inserir dados do ranking
                 Ranking.objects.create(
-                    project=project,
-                    status=status,
-                    rank=timeline_item['rank']
+                    project_id = project,
+                    status_id = status,
+                    rank = timeline_count['rank']
                 )
 
-            # Resposta de sucesso
+            # Retorne uma resposta de sucesso
             response_data = {
-                'message': 'Projeto criado com sucesso'
+                'message': 'Prjeto criado com sucesso'
             }
 
+            # Retorne uma resposta de sucesso
             return JsonResponse(response_data)
 
         except Exception as e:
+            # Em caso de qualquer exceção, retorne uma resposta de erro
             return JsonResponse({'error': str(e)}, status=500)
 
+    # Se não for um request POST, retorne um erro de método não permitido
     return JsonResponse({'error': 'Método não permitido'}, status=405)
 
-
-# Atualizar projeto
 @csrf_exempt
 def update_project(request):
 
-    # Definir metodo
+    # Informa o metodo
     if request.method == 'POST':
 
         try:
-
-             # Carregar dados do json
+            # Carregar dados do request
             data = json.loads(request.body.decode('utf-8'))
 
             # Carregar dados das repartições do json
@@ -102,33 +114,33 @@ def update_project(request):
 
             # Atualizar ou criar dados da timeline (status e ranking)
             for timeline_item in timeline:
-                status_id = timeline_item.get('id')
 
-                # Verifica se existe status
-                if not status_id:
-
+                # Verificar se o status já existe
+                status_id = timeline_item.get('id', 0)
+                if status_id == 0:
                     # Criar novo status
                     status = Status.objects.create(
                         name=timeline_item['name']
                     )
-
                 else:
                     # Atualizar status existente
                     status = get_object_or_404(Status, id=status_id)
                     status.name = timeline_item['name']
                     status.save()
 
-                # Atualizar ou criar o ranking
+                # Verificar se o ranking já existe para o status e projeto
                 ranking, created = Ranking.objects.get_or_create(
-                    project=project,
-                    status=status
+                    project_id=project,
+                    status_id=status
                 )
 
+                # Atualizar os dados do ranking
                 ranking.rank = timeline_item['rank']
-                ranking.status = timeline_item['status']
+                ranking.status = timeline_item['status']  
+                ranking.last_update = timeline_item['last_update']  
                 ranking.save()
-            
-            # Resposta de sucesso
+
+            # Retornar uma resposta de sucesso
             response_data = {
                 'message': 'Projeto atualizado com sucesso'
             }
@@ -140,48 +152,43 @@ def update_project(request):
 
     return JsonResponse({'error': 'Método não permitido'}, status=405)
 
-
-# Listar projeto
 @csrf_exempt
 def list_project(request, project_id):
 
-    # Definir metodo
+    # Informa o metodo
     if request.method == 'GET':
 
         try:
-
             # Buscar o projeto pelo ID
             project = get_object_or_404(Project, id=project_id)
 
             # Buscar o cliente associado ao projeto
-            client = project.client
+            client = Client.objects.filter(id=project.id)
 
             # Buscar o ranking associado ao projeto
-            rankings = Ranking.objects.filter(project=project)
+            rankings = Ranking.objects.filter(project_id=project)
 
-            # Cria lista para timeline
+            # Criar a lista da timeline
             timeline = []
-
-            # Preenche a lista da timeline com dados dos rankings
             for ranking in rankings:
                 timeline.append({
-                    'id': ranking.status.id,
-                    'name': ranking.status.name,
+                    'id': ranking.status_id.id,
+                    'name': ranking.status_id.name,
                     'rank': ranking.rank,
-                    'last_update': ranking.last_update.strftime('%d/%m/%Y')
+                    'last_update': ranking.last_update.strftime('%d/%m/%Y'),  # Formatação da data
                 })
 
-            # Montar o objeto de resposta com dados do projeto, cliente e timeline
+            # Montar o objeto de resposta
             response_data = {
                 'project': {
                     'id': project.id,
                     'name': project.name,
-                    'key': project.key
+                    'key': project.key,
                 },
                 'client': {
                     'id': client.id,
                     'name': client.name,
-                    'email': client.email
+                    'email': client.email,
                 },
                 'timeline': timeline
             }
@@ -193,32 +200,27 @@ def list_project(request, project_id):
 
     return JsonResponse({'error': 'Método não permitido'}, status=405)
 
-
-# Deletar projeto
 @csrf_exempt
 def delete_project(request, project_id):
 
-    # Definir metodo
+    # Informar o metodo
     if request.method == 'DELETE':
 
         try:
-
-            # Buscar o projeto pelo ID e deletar todos os rankings e o projeto
+            
+            # Buscar o projeto pelo ID
             project = get_object_or_404(Project, id=project_id)
 
-            # Deletar rankings e projeto
-            Ranking.objects.filter(project=project).delete()
+            # Deletar todos os rankings associados ao projeto
+            Ranking.objects.filter(project_id=project).delete()
+
+            # Deletar o projeto
             project.delete()
 
             # Resposta de sucesso
-            response_data = {
-                'message': 'Projeto atualizado com sucesso'
-            }
-
-            return JsonResponse(response_data, status=200)
+            return JsonResponse({'message': 'Projeto e rankings deletados com sucesso'}, status=200)
 
         except Exception as e:
-
             return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'error': 'Método não permitido'}, status=405)

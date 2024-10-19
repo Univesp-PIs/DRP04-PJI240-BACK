@@ -1,11 +1,12 @@
 from django.db import models
 from account.models import Credential
 
+# Create your models here.
+
 # Projeto
 class Project(models.Model):
     name = models.CharField(max_length=100)
     key = models.CharField(max_length=20)
-    client = models.ForeignKey('Client', on_delete=models.CASCADE)  # Relacionamento com Client
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -27,8 +28,8 @@ class Status(models.Model):
 
 # Ranking
 class Ranking(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    status = models.ForeignKey(Status, on_delete=models.CASCADE)
+    project_id = models.ForeignKey(Project, on_delete=models.CASCADE)
+    status_id = models.ForeignKey(Status, on_delete=models.CASCADE)
     rank = models.CharField(max_length=100)
     last_update = models.DateTimeField(auto_now=True)
     status = models.BooleanField(default=True)
