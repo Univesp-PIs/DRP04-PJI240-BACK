@@ -39,13 +39,17 @@ def create_project(request):
 
             # Criar status e rankings na timeline
             for timeline_item in timeline:
-                status_id = timeline_item.get('id')
 
-                if not status_id:
+                # Carregar dados do status
+                status_id = timeline_item.get('id', 0)
+
+                if status_id == 0:
+                    
                     # Criar novo status
                     status = Status.objects.create(
                         name=timeline_item['name']
                     )
+
                 else:
                     # Atualizar status existente
                     status = Status.objects.get(id=status_id)
