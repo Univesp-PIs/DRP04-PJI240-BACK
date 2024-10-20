@@ -317,7 +317,7 @@ def create_condition(request):
 def update_condition(request):
 
     # Verificar se o método é PUT
-    if request.method == 'POST':
+    if request.method == 'PUT':
 
         try:
             # Carregar dados do json
