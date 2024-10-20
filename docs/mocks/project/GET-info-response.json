@@ -1,0 +1,42 @@
+{
+	"project": {
+	  "id": 1,
+	  "name": "Teste Projeto",
+	  "key": "xnbh364#a8&"
+	},
+	"client": {
+		"id": 1,
+		"name": "Teste Cliente",
+		"email": "teste@email.com"
+	},
+	"timeline": [
+	  {
+		"id": 1,
+		"name": "Teste Status 1",
+		"rank": 1,
+		"last_update": "01/01/2024",
+		"status": "done"
+	  },
+	  {
+		"id": 2,
+		"name": "Teste Status 2",
+		"rank": 3,
+		"last_update": "02/02/2024",
+		"status": "pending"
+	  },
+	  {
+		"id": 3,
+		"name": "Teste Status Novo 1",
+		"rank": 4,
+		"last_update": "03/03/2024",
+		"status": "in_progress"
+	  },
+	  {
+		"id": 4,
+		"name": "Teste Status Novo 2",
+		"rank": 2,
+		"last_update": "04/04/2024",
+		"status": "cancelled"
+	  }
+	]
+}

@@ -1,0 +1,26 @@
+[	
+	{
+		"project": {
+		"id": 1,
+		"name": "Teste Projeto",
+		"key": "xnbh364#a8&"
+		},
+		"client": {
+			"id": 1,
+			"name": "Teste Cliente",
+			"email": "teste@email.com"
+		}
+	},
+	{
+		"project": {
+		"id": 2,
+		"name": "Teste Projeto",
+		"key": "xnbh364#a8&"
+		},
+		"client": {
+			"id": 2,
+			"name": "Teste Cliente",
+			"email": "teste@email.com"
+		}
+	}
+]
