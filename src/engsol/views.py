@@ -88,59 +88,65 @@ def update_project(request):
 
             # Carregar dados do json
             data = json.loads(request.body.decode('utf-8'))
-
-            # Carregar dados das repartições do json
             project_data = data['project']
             client_data = data['client']
             timeline = data['timeline']
 
-            # Atualizar dados do projeto
+            # Atualizar projeto
             project = get_object_or_404(Project, id=project_data['id'])
             project.name = project_data['name']
             project.save()
 
-            # Atualizar dados do cliente
+            # Atualizar cliente
             client = get_object_or_404(Client, id=client_data['id'])
             client.name = client_data['name']
             client.email = client_data['email']
             client.save()
 
-            # Atualizar ou criar dados da timeline (status e ranking)
+            # Atualizar ou criar status e rankings na timeline
             for timeline_item in timeline:
 
-                # Carregar dados do status
-                condition_id = timeline_item.get('id', 0)
+                # Obter dados por itens
+                ranking_data = timeline_item['ranking']
+                condition_data = ranking_data['condition']
 
-                # Verifica se existe status
-                if condition_id == 0:
-
-                    # Criar novo status
+                # Verificar se a condição já existe ou precisa ser criada
+                if condition_data['id'] == 0:
+                    
+                    # Criar novo condition
                     condition = Condition.objects.create(
-                        name=timeline_item['name']
+                        name=condition_data['name']
                     )
 
                 else:
-                    # Atualizar status existente
-                    condition = get_object_or_404(Condition, id=condition_id)
-                    condition.name = timeline_item['name']
+
+                    # Atualizar condition existente
+                    condition = get_object_or_404(Condition, id=condition_data['id'])
+                    condition.name = condition_data['name']
                     condition.save()
 
-                # Atualizar ou criar o ranking
-                ranking, created = Ranking.objects.get_or_create(
-                    project=project,
-                    condition=condition
-                )
+                # Verificar se o ranking já existe ou precisa ser criado
+                if ranking_data['id'] == 0:
 
-                ranking.rank = timeline_item['rank']
-                ranking.last_update = timeline_item['last_update']
-                ranking.save()
-            
-            # Resposta de sucesso
-            response_data = {
-                'message': 'Projeto atualizado com sucesso'
-            }
+                    # Criar novo ranking
+                    ranking = Ranking.objects.create(
+                        project=project,
+                        condition=condition,
+                        rank=ranking_data['rank'],
+                        last_update=ranking_data.get('last_update', None)
+                    )
 
-            return JsonResponse(response_data)
+                else:
+
+                    # Atualizar ranking existente
+                    ranking = get_object_or_404(Ranking, id=ranking_data['id'])
+                    ranking.rank = ranking_data['rank']
+                    ranking.last_update = ranking_data['last_update']
+                    ranking.condition = condition
+                    ranking.save()
+
+            response_data = {'message': 'Projeto atualizado com sucesso'}
+            return JsonResponse(response_data, status=200)
 
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
