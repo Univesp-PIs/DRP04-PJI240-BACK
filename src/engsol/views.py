@@ -219,13 +219,16 @@ def delete_project(request):
             # Buscar o projeto pelo ID
             project = get_object_or_404(Project, id=data['id'])
 
+            # Buscar ranking
+            #ranking = Ranking.objects.filter(project=project)
+
             # Deletar rankings e projeto
-            Ranking.objects.filter(project=project).delete()
             project.delete()
+            #ranking.delete()
 
             # Resposta de sucesso
             response_data = {
-                'message': 'Projeto atualizado com sucesso'
+                'message': 'Projeto deletado com sucesso'
             }
 
             return JsonResponse(response_data, status=200)
