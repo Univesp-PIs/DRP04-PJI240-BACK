@@ -132,7 +132,8 @@ def update_project(request):
                 )
 
                 ranking.rank = timeline_item['rank']
-                ranking.status = timeline_item['status']
+                ranking.condition = timeline_item['status']
+                ranking.last_update = timeline_item['last_update']
                 ranking.save()
             
             # Resposta de sucesso
