@@ -276,3 +276,133 @@ def list_project(request):
             return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+# --------------------------------------------------------------- CONDITION ---------------------------------------------------------------
+
+# Create Condition
+@csrf_exempt
+def create_condition(request):
+
+    # Verificar se o método é POST
+    if request.method == 'POST':
+
+        try:
+
+            # Carregar dados do json
+            data = json.loads(request.body.decode('utf-8'))
+
+            # Criar uma nova condição
+            condition = Condition.objects.create(
+                name=data['name']
+            )
+
+            # Resposta de sucesso
+            response_data = {
+                'message': 'Condição criada com sucesso',
+                'condition': {
+                    'id': condition.id,
+                    'name': condition.name
+                }
+            }
+
+            return JsonResponse(response_data, status=201)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+# Update Condition
+@csrf_exempt
+def update_condition(request):
+
+    # Verificar se o método é PUT
+    if request.method == 'POST':
+
+        try:
+            # Carregar dados do json
+            data = json.loads(request.body.decode('utf-8'))
+
+            # Buscar a condição pelo ID
+            condition = get_object_or_404(Condition, id=data['id'])
+
+            # Atualizar os dados da condição
+            condition.name = data['name']
+            condition.save()
+
+            # Resposta de sucesso
+            response_data = {
+                'message': 'Condição atualizada com sucesso',
+                'condition': {
+                    'id': condition.id,
+                    'name': condition.name
+                }
+            }
+
+            return JsonResponse(response_data, status=200)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+# Delete Condition
+@csrf_exempt
+def delete_condition(request):
+
+    # Verificar se o método é DELETE
+    if request.method == 'DELETE':
+
+        try:
+
+            # Carregar dados do json
+            data = json.loads(request.body.decode('utf-8'))
+
+            # Buscar a condição pelo ID
+            condition = get_object_or_404(Condition, id=data['id'])
+
+            # Deletar a condição
+            condition.delete()
+
+            # Resposta de sucesso
+            response_data = {
+                'message': 'Condição deletada com sucesso'
+            }
+
+            return JsonResponse(response_data, status=200)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+# List Condition
+@csrf_exempt
+def list_conditions(request):
+
+    # Verificar se o método é GET
+    if request.method == 'GET':
+
+        try:
+            
+            # Buscar todas as condições
+            conditions = Condition.objects.all()
+
+            # Criar uma lista para armazenar os dados das condições
+            condition_list = []
+
+            # Iterar sobre cada condição e montar o JSON de resposta
+            for condition in conditions:
+                condition_data = {
+                    'id': condition.id,
+                    'name': condition.name
+                }
+                condition_list.append(condition_data)
+
+            # Retornar a lista de condições em formato JSON
+            return JsonResponse(condition_list, safe=False)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método não permitido'}, status=405)
