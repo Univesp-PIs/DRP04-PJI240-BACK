@@ -150,7 +150,7 @@ def update_project(request):
 
 # Listar projeto
 @csrf_exempt
-def list_project(request):
+def info_project(request):
 
     # Definir metodo
     if request.method == 'GET':
@@ -235,6 +235,44 @@ def delete_project(request):
 
         except Exception as e:
 
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+# Listar todos os projetos
+@csrf_exempt
+def list_project(request):
+
+    # Verificar se o método é GET
+    if request.method == 'GET':
+
+        try:
+            # Buscar todos os projetos
+            projects = Project.objects.all()
+
+            # Criar uma lista para armazenar os dados dos projetos
+            project_list = []
+
+            # Iterar sobre cada projeto e montar o JSON de resposta
+            for project in projects:
+                project_data = {
+                    'project': {
+                        'id': project.id,
+                        'name': project.name,
+                        'key': project.key
+                    },
+                    'client': {
+                        'id': project.client.id,
+                        'name': project.client.name,
+                        'email': project.client.email
+                    }
+                }
+                project_list.append(project_data)
+
+            # Retornar a lista de projetos em formato JSON
+            return JsonResponse(project_list, safe=False)
+
+        except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'error': 'Método não permitido'}, status=405)
