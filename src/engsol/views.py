@@ -86,7 +86,7 @@ def update_project(request):
 
         try:
 
-             # Carregar dados do json
+            # Carregar dados do json
             data = json.loads(request.body.decode('utf-8'))
 
             # Carregar dados das repartições do json
@@ -150,15 +150,18 @@ def update_project(request):
 
 # Listar projeto
 @csrf_exempt
-def list_project(request, project_id):
+def list_project(request):
 
     # Definir metodo
     if request.method == 'GET':
 
         try:
 
+            # Carregar dados do json
+            data = json.loads(request.body.decode('utf-8'))
+
             # Buscar o projeto pelo ID
-            project = get_object_or_404(Project, id=project_id)
+            project = get_object_or_404(Project, id=data['id'])
 
             # Buscar o cliente associado ao projeto
             client = project.client
@@ -203,15 +206,18 @@ def list_project(request, project_id):
 
 # Deletar projeto
 @csrf_exempt
-def delete_project(request, project_id):
+def delete_project(request):
 
     # Definir metodo
     if request.method == 'DELETE':
 
         try:
 
-            # Buscar o projeto pelo ID e deletar todos os rankings e o projeto
-            project = get_object_or_404(Project, id=project_id)
+            # Carregar dados do json
+            data = json.loads(request.body.decode('utf-8'))
+
+            # Buscar o projeto pelo ID
+            project = get_object_or_404(Project, id=data['id'])
 
             # Deletar rankings e projeto
             Ranking.objects.filter(project=project).delete()

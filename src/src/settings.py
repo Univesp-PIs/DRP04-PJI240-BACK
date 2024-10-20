@@ -35,12 +35,6 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",")
-#ALLOWED_HOSTS = [
-#    'localhost',
-#    'localhost:3000',
-#    'engsol-django-render.onrender.com',    
-#]
-
 
 # Application definition
 
@@ -54,6 +48,7 @@ INSTALLED_APPS = [
 
     # Adicionar os novos aplicativos
     'engsol',
+    'account'
 
     # Adicionar o cors
     'corsheaders',
@@ -114,8 +109,6 @@ DATABASES = {
 }
 
 #ISSO
-
-#DATABASES['default'] = dj_database_url.parse(database_url)
 #DATABASES['default'] = dj_database_url.parse(os.getenv("DATABASE_URL"), conn_max_age=600, ssl_require=True)
 
 
