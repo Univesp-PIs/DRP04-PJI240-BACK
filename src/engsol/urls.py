@@ -11,10 +11,10 @@ urlpatterns = [
     path('info_project', views.info_project, name='info_project'),
     path('list_project', views.list_project, name='list_project'),
 
-    # Status
-    #path('create_status', views.create_status, name='create_status'),
-    #path('update_status', views.update_status, name='update_status'),
-    #path('delete_status', views.delete_status, name='delete_status'),
-    #path('info_status', views.info_status, name='info_status')
+    # Condition
+    path('create_condition', views.create_condition, name='create_condiotion'),
+    path('update_condition', views.update_condition, name='update_condition'),
+    path('delete_condition', views.delete_condition, name='delete_condition'),
+    path('list_condition', views.list_condition, name='list_condition'),
     
 ]

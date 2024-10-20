@@ -378,13 +378,13 @@ def delete_condition(request):
 
 # List Condition
 @csrf_exempt
-def list_conditions(request):
+def list_condition(request):
 
     # Verificar se o método é GET
     if request.method == 'GET':
 
         try:
-            
+
             # Buscar todas as condições
             conditions = Condition.objects.all()
 
