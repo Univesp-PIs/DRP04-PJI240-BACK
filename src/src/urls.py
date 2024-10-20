@@ -22,4 +22,5 @@ urlpatterns = [
 
     # Adicionar arquivo de urls por aplicativo
     path('engsol/', include('engsol.urls')),
+    path('account/', include('account.urls'))
 ]
