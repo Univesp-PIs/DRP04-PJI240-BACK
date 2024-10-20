@@ -28,7 +28,3 @@
 # Para instalar os requisitos no novo ambiente virtual:
 
 1) No terminal, com a venv ativada, digitar 'pip install -r requirements.txt' para instalar o arquivos dos requisitos da venv;
-
-
-
-

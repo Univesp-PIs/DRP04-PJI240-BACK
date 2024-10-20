@@ -154,7 +154,7 @@ def update_project(request):
     return JsonResponse({'error': 'Método não permitido'}, status=405)
 
 
-# Listar projeto
+# Informações do projeto
 @csrf_exempt
 def info_project(request):
 

@@ -25,10 +25,18 @@ class Condition(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+# Note
+class Note(models.Model):
+    name = models.CharField(max_length=100)
+    status = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
 # Ranking
 class Ranking(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     condition = models.ForeignKey(Condition, on_delete=models.CASCADE)
+    note = models.ForeignKey(Note, on_delete=models.CASCADE, null=True, blank=True)
     rank = models.CharField(max_length=100)
     last_update = models.DateTimeField(auto_now=True)
     status = models.BooleanField(default=True)
