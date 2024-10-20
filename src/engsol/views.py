@@ -181,10 +181,15 @@ def info_project(request):
             # Preenche a lista da timeline com dados dos rankings
             for ranking in rankings:
                 timeline.append({
-                    'id': ranking.condition.id,
-                    'name': ranking.condition.name,
-                    'rank': ranking.rank,
-                    'last_update': ranking.last_update.strftime('%d/%m/%Y')
+                    'ranking': {
+                        'id': ranking.id,
+                        'rank': ranking.rank,
+                        'last_update': ranking.last_update.strftime('%d/%m/%Y') if ranking.last_update else None,
+                        'condition': {
+                            'id': ranking.condition.id,
+                            'name': ranking.condition.name
+                        }
+                    }
                 })
 
             # Montar o objeto de resposta com dados do projeto, cliente e timeline
