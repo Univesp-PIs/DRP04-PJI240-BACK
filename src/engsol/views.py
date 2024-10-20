@@ -82,7 +82,7 @@ def create_project(request):
 def update_project(request):
 
     # Definir metodo
-    if request.method == 'POST':
+    if request.method == 'PUT':
 
         try:
 
