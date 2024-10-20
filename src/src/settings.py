@@ -48,7 +48,7 @@ INSTALLED_APPS = [
 
     # Adicionar os novos aplicativos
     'engsol',
-    'account'
+    'account',
 
     # Adicionar o cors
     'corsheaders',
