@@ -417,3 +417,37 @@ def list_condition(request):
             return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+# --------------------------------------------------------------- CONDITION ---------------------------------------------------------------
+
+@csrf_exempt
+def create_note(request):
+
+    # Verificar se o método é POST
+    if request.method == 'POST':
+
+        try:
+
+            # Carregar dados do json
+            data = json.loads(request.body.decode('utf-8'))
+
+            # Criar uma nova condição
+            note = Note.objects.create(
+                name=data['name']
+            )
+
+            # Resposta de sucesso
+            response_data = {
+                'message': 'Condição criada com sucesso',
+                'note': {
+                    'id': note.id,
+                    'name': note.name
+                }
+            }
+
+            return JsonResponse(response_data, status=201)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método não permitido'}, status=405)

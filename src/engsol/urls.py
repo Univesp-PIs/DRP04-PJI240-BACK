@@ -17,4 +17,6 @@ urlpatterns = [
     path('delete_condition', views.delete_condition, name='delete_condition'),
     path('list_condition', views.list_condition, name='list_condition'),
     
+    # Note
+    path('create_note', views.create_note, name='create_note'),
 ]
