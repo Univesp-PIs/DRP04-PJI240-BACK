@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from account.models import Credential
-from .models import Project, Client, Condition, Ranking
+from .models import Project, Client, Condition, Ranking, Note
 from django.core import serializers
 from django.shortcuts import get_object_or_404
 from django.utils.crypto import get_random_string
@@ -412,6 +412,40 @@ def list_condition(request):
 
             # Retornar a lista de condições em formato JSON
             return JsonResponse(condition_list, safe=False)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+# --------------------------------------------------------------- CONDITION ---------------------------------------------------------------
+
+@csrf_exempt
+def create_note(request):
+
+    # Verificar se o método é POST
+    if request.method == 'POST':
+
+        try:
+
+            # Carregar dados do json
+            data = json.loads(request.body.decode('utf-8'))
+
+            # Criar uma nova condição
+            note = Note.objects.create(
+                name=data['name']
+            )
+
+            # Resposta de sucesso
+            response_data = {
+                'message': 'Condição criada com sucesso',
+                'note': {
+                    'id': note.id,
+                    'name': note.name
+                }
+            }
+
+            return JsonResponse(response_data, status=201)
 
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
