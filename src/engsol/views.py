@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from account.models import Credential
-from .models import Project, Client, Condition, Ranking
+from .models import Project, Client, Condition, Ranking, Note
 from django.core import serializers
 from django.shortcuts import get_object_or_404
 from django.utils.crypto import get_random_string

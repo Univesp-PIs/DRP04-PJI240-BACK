@@ -36,5 +36,5 @@ class Ranking(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 # Note
-class Note(models.model):
+class Note(models.Model):
     name = models.CharField(max_length=100)
