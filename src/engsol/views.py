@@ -496,9 +496,10 @@ def edit_note(request):
 
             # Buscar a condição pelo ID
             note = get_object_or_404(Note, id=data['id'])
-
+            newNote = data['note']
+            note.name = newNote
             # Editar a condição
-            note.edit()
+            note.save()
 
             # Resposta de sucesso
             response_data = {
