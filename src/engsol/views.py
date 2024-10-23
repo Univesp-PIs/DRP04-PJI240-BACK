@@ -112,7 +112,7 @@ def update_project(request):
 
                 # Verificar se a condição já existe ou precisa ser criada
                 if condition_data['id'] == 0:
-                    
+
                     # Criar novo condition
                     condition = Condition.objects.create(
                         name=condition_data['name']
@@ -472,7 +472,7 @@ def delete_note(request):
 
             # Resposta de sucesso
             response_data = {
-                'message': 'nota deletada com sucesso'
+                'message': 'nota deletada com sucesso!'
             }
 
             return JsonResponse(response_data, status=200)
@@ -481,3 +481,33 @@ def delete_note(request):
             return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+# Edit Note
+@csrf_exempt
+def edit_note(request):
+
+    # Verificar se o método é PUT
+    if request.method == 'PUT':
+
+        try:
+
+            # Carregar dados do json
+            data = json.loads(request.body.decode('utf-8'))
+
+            # Buscar a condição pelo ID
+            note = get_object_or_404(Note, id=data['id'])
+
+            # Editar a condição
+            note.edit()
+
+            # Resposta de sucesso
+            response_data = {
+                'message': 'nota editada com sucesso!'
+            }
+
+            return JsonResponse(response_data, status=200)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método não permitido'}, status=406)
