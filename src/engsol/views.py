@@ -418,7 +418,7 @@ def list_condition(request):
 
     return JsonResponse({'error': 'Método não permitido'}, status=405)
 
-# --------------------------------------------------------------- CONDITION ---------------------------------------------------------------
+# --------------------------------------------------------------- Note ---------------------------------------------------------------
 
 @csrf_exempt
 def create_note(request):
@@ -446,6 +446,36 @@ def create_note(request):
             }
 
             return JsonResponse(response_data, status=201)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+# Delete Note
+@csrf_exempt
+def delete_note(request):
+
+    # Verificar se o método é DELETE
+    if request.method == 'DELETE':
+
+        try:
+
+            # Carregar dados do json
+            data = json.loads(request.body.decode('utf-8'))
+
+            # Buscar a condição pelo ID
+            note = get_object_or_404(Note, id=data['id'])
+
+            # Deletar a condição
+            note.delete()
+
+            # Resposta de sucesso
+            response_data = {
+                'message': 'nota deletada com sucesso'
+            }
+
+            return JsonResponse(response_data, status=200)
 
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)

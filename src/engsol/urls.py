@@ -19,4 +19,6 @@ urlpatterns = [
     
     # Note
     path('create_note', views.create_note, name='create_note'),
+    path('delete_note', views.delete_note, name='delete_note'),
+
 ]
