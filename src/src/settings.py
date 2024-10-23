@@ -32,11 +32,9 @@ load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG =  True
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = [
-    '127.0.0.1'
-]
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",")
 
 # Application definition
 
@@ -91,10 +89,22 @@ WSGI_APPLICATION = 'src.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-       'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',  # O caminho para o arquivo do banco de dados SQLite
-    
+    'default': 
+        #dj_database_url.parse(os.getenv("DATABASE_URL"))
+        #dj_database_url.parse(os.getenv("DATABASE_URL"), conn_max_age=600, ssl_require=True)
+        {
+        # Altera o motor de banco de dados para MySQL
+        'ENGINE': os.getenv('DATABASE_ENGINE'), 
+        # Nome do banco de dados  
+        'NAME': os.getenv("DATABASE_NAME"), 
+        # Usuário do banco de dados (padrão defaut - 'root')             
+        'USER': os.getenv("DATABASE_USER"), 
+        # Senha do banco de dados (se houver)                      
+        'PASSWORD': os.getenv("DATABASE_PASSWORD"), 
+        # Host do banco de dados (no caso, 'localhost')                       
+        'HOST': os.getenv("DATABASE_HOST"),
+        # Porta do banco de dados (opcional, padrão para MySQL é 3306)                   
+        'PORT': os.getenv("DATABASE_PORT")
     }
 }
 
