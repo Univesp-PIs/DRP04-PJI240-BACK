@@ -25,4 +25,5 @@ jobs:
         pip install -r ./src/requirements.txt
     - name: Run Tests
       run: |
-        coverage run ./src/manage.py test
+        cd src
+        coverage run manage.py test
