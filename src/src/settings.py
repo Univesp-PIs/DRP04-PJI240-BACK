@@ -56,6 +56,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # Certifique-se de que o middleware do CORS vem logo após o SecurityMiddleware
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -162,9 +163,12 @@ REST_FRAMEWORK = {
     # Outras configurações REST_FRAMEWORK, se houver
 }
 
+# Permitir que o Django inclua o cabeçalho 'Access-Control-Allow-Origin'
+CORS_ALLOW_CREDENTIALS = True
+
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',  # Seu frontend em localhost
     'http://localhost',
 ]
 
-#CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = True
