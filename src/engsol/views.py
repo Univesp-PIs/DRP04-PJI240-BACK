@@ -283,15 +283,15 @@ def list_project(request):
             # Buscar todos os projetos
             projects = Project.objects.all()
 
-            # Buscar o ranking associado ao projeto
-            rankings = Ranking.objects.filter(project=project)
-
             # Criar uma lista para armazenar os dados dos projetos
             project_list = []
             timeline = []
             
             # Iterar sobre cada projeto e montar o JSON de resposta
             for project in projects:
+
+                # Buscar o ranking associado ao projeto
+                rankings = Ranking.objects.filter(project=project)
 
                 # Preenche a lista da timeline com dados dos rankings
                 for ranking in rankings:
