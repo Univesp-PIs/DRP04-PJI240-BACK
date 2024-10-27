@@ -113,7 +113,7 @@ def update_project(request):
             project.save()
 
             # Atualizar cliente
-            client = get_object_or_404(Client, id=client_data['id'])
+            client = get_object_or_404(Client, project=project)
             client.name = client_data['name']
             client.email = client_data['email']
             client.save()
