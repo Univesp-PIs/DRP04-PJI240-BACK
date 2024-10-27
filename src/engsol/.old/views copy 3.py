@@ -27,17 +27,17 @@ def create_project(request):
             client_data = data['client']
             timeline = data['timeline']
 
+            # Inserir dados do cliente
+            client = Client.objects.create(
+                name=client_data['name'],
+                email=client_data['email']
+            )
+
             # Inserir dados do projeto
             project = Project.objects.create(
                 name=project_data['name'],
-                key=get_random_string(length=20)
-            )
-
-            # Inserir dados do cliente
-            client = Client.objects.create(
-                project=project,
-                name=client_data['name'],
-                email=client_data['email']
+                key=get_random_string(length=20),
+                client=client
             )
 
             # Criar status e rankings na timeline
@@ -191,7 +191,7 @@ def info_project(request):
             project = get_object_or_404(Project, id=data['id'])
 
             # Buscar o cliente associado ao projeto
-            client = Client.objects.filter(project=project)
+            client = project.client
 
             # Buscar o ranking associado ao projeto
             rankings = Ranking.objects.filter(project=project)
@@ -256,12 +256,12 @@ def delete_project(request):
             project = get_object_or_404(Project, id=data['id'])
 
             # Deletar todos os rankings do projeto
-            #rankings = Ranking.objects.filter(project=project)
-            #rankings.delete()
+            rankings = Ranking.objects.filter(project=project)
+            rankings.delete()
             
             # Deletar o cliente associado ao projeto
-            #client = Client.objects.filter(project=project)
-            #client.delete()
+            client = Client.objects.filter(project=project)
+            client.delete()
 
             # Deletar o projeto
             project.delete()
@@ -298,9 +298,6 @@ def list_project(request):
             # Iterar sobre cada projeto e montar o JSON de resposta
             for project in projects:
 
-                # Buscar o cliente associado ao projeto
-                client = Client.objects.filter(project=project)
-
                 # Buscar o ranking associado ao projeto
                 rankings = Ranking.objects.filter(project=project)
 
@@ -330,9 +327,9 @@ def list_project(request):
                         'key': project.key
                     },
                     'client': {
-                        'id': client.id,
-                        'name': client.name,
-                        'email': client.email
+                        'id': project.client.id,
+                        'name': project.client.name,
+                        'email': project.client.email
                     },
                     'timeline': timeline
                 }
