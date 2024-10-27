@@ -56,6 +56,11 @@ def create_project(request):
                         name=condition_data['name']
                     )
 
+                else:
+
+                    # Obter a condição
+                    condition = Condition.objects.get(pk=condition_id)
+
                 # Verificar se o ranking já existe ou precisa ser criado
                 if ranking_id == 0:
 
