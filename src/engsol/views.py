@@ -40,29 +40,34 @@ def create_project(request):
             # Criar status e rankings na timeline
             for timeline_item in timeline:
 
+                # Obter dados por itens
+                ranking_data = timeline_item['ranking']
+                condition_data = timeline_item['condition']
+
                 # Carregar dados do status
-                condition_id = timeline_item.get('id', 0)
+                condition_id = condition_data.get('id', 0)
+                ranking_id = ranking_data.get('id', 0)
 
+                # Verificar se a condição já existe ou precisa ser criada
                 if condition_id == 0:
-
+                    
                     # Criar novo condition
                     condition = Condition.objects.create(
-                        name=timeline_item['name']
+                        name=condition_data['name']
                     )
 
-                else:
+                # Verificar se o ranking já existe ou precisa ser criado
+                if ranking_id == 0:
 
-                    # Atualizar condition existente
-                    condition = Condition.objects.get(id=condition_id)
-                    condition.name = timeline_item['name']
-                    condition.save()
-
-                # Inserir dados do ranking
-                Ranking.objects.create(
-                    project=project,
-                    condition=condition,
-                    rank=timeline_item['rank']
-                )
+                    # Criar novo ranking
+                    ranking = Ranking.objects.create(
+                        project=project,
+                        condition=condition,
+                        rank=ranking_data['rank'],
+                        last_update=ranking_data.get('last_update', None),
+                        note=ranking_data['note'],
+                        description=ranking_data.get('description', None)
+                    )
 
             # Resposta de sucesso
             response_data = {
@@ -88,6 +93,8 @@ def update_project(request):
 
             # Carregar dados do json
             data = json.loads(request.body.decode('utf-8'))
+
+            # Carregar dados das repartições do json
             project_data = data['project']
             client_data = data['client']
             timeline = data['timeline']
@@ -108,10 +115,14 @@ def update_project(request):
 
                 # Obter dados por itens
                 ranking_data = timeline_item['ranking']
-                condition_data = ranking_data['condition']
+                condition_data = timeline_item['condition']
+
+                # Carregar dados do status
+                condition_id = condition_data.get('id', 0)
+                ranking_id = ranking_data.get('id', 0)
 
                 # Verificar se a condição já existe ou precisa ser criada
-                if condition_data['id'] == 0:
+                if condition_id == 0:
                     
                     # Criar novo condition
                     condition = Condition.objects.create(
@@ -121,8 +132,8 @@ def update_project(request):
                 else:
 
                     # Atualizar condition existente
-                    condition = get_object_or_404(Condition, id=condition_data['id'])
-                    condition.name = condition_data['name']
+                    condition = get_object_or_404(Condition, id=condition_id)
+                    #condition.name = condition_data['name']
                     condition.save()
 
                 # Verificar se o ranking já existe ou precisa ser criado
@@ -133,16 +144,20 @@ def update_project(request):
                         project=project,
                         condition=condition,
                         rank=ranking_data['rank'],
-                        last_update=ranking_data.get('last_update', None)
+                        last_update=ranking_data.get('last_update', None),
+                        note=ranking_data['note'],
+                        description=ranking_data.get('description', None)
                     )
 
                 else:
 
                     # Atualizar ranking existente
-                    ranking = get_object_or_404(Ranking, id=ranking_data['id'])
+                    ranking = get_object_or_404(Ranking, id=ranking_id)
+                    ranking.condition = condition
                     ranking.rank = ranking_data['rank']
                     ranking.last_update = ranking_data['last_update']
-                    ranking.condition = condition
+                    ranking.note = ranking_data['note']
+                    ranking.description = ranking_data.get('description', None)
                     ranking.save()
 
             response_data = {'message': 'Projeto atualizado com sucesso'}
@@ -180,15 +195,19 @@ def info_project(request):
 
             # Preenche a lista da timeline com dados dos rankings
             for ranking in rankings:
+
+                # Adiciona dados ao timeline
                 timeline.append({
                     'ranking': {
                         'id': ranking.id,
                         'rank': ranking.rank,
                         'last_update': ranking.last_update.strftime('%d/%m/%Y') if ranking.last_update else None,
-                        'condition': {
-                            'id': ranking.condition.id,
-                            'name': ranking.condition.name
-                        }
+                        'note': ranking.note,
+                        'description': ranking.description
+                    },
+                    'condition': {
+                        'id': ranking.condition.id,
+                        'name': ranking.condition.name
                     }
                 })
 
@@ -230,12 +249,8 @@ def delete_project(request):
             # Buscar o projeto pelo ID
             project = get_object_or_404(Project, id=data['id'])
 
-            # Buscar ranking
-            #ranking = Ranking.objects.filter(project=project)
-
             # Deletar rankings e projeto
             project.delete()
-            #ranking.delete()
 
             # Resposta de sucesso
             response_data = {
@@ -258,14 +273,39 @@ def list_project(request):
     if request.method == 'GET':
 
         try:
+
             # Buscar todos os projetos
             projects = Project.objects.all()
 
+            # Buscar o ranking associado ao projeto
+            rankings = Ranking.objects.filter(project=project)
+
             # Criar uma lista para armazenar os dados dos projetos
             project_list = []
-
+            timeline = []
+            
             # Iterar sobre cada projeto e montar o JSON de resposta
             for project in projects:
+
+                # Preenche a lista da timeline com dados dos rankings
+                for ranking in rankings:
+
+                    # Adiciona dados ao timeline
+                    timeline.append({
+                        'ranking': {
+                            'id': ranking.id,
+                            'rank': ranking.rank,
+                            'last_update': ranking.last_update.strftime('%d/%m/%Y') if ranking.last_update else None,
+                            'note': ranking.note,
+                            'description': ranking.description
+                        },
+                        'condition': {
+                            'id': ranking.condition.id,
+                            'name': ranking.condition.name
+                        }
+                    })
+
+                # Montar o objeto de resposta com dados do projeto, cliente e timeline
                 project_data = {
                     'project': {
                         'id': project.id,
@@ -276,8 +316,11 @@ def list_project(request):
                         'id': project.client.id,
                         'name': project.client.name,
                         'email': project.client.email
-                    }
+                    },
+                    'timeline': timeline
                 }
+
+                # Limpar timeline para o próximo projeto
                 project_list.append(project_data)
 
             # Retornar a lista de projetos em formato JSON
