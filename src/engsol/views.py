@@ -139,10 +139,8 @@ def update_project(request):
 
                 else:
 
-                    # Atualizar condition existente
-                    condition = get_object_or_404(Condition, id=condition_id)
-                    #condition.name = condition_data['name']
-                    condition.save()
+                    # Obter a condição
+                    condition = Condition.objects.get(pk=condition_id)
 
                 # Verificar se o ranking já existe ou precisa ser criado
                 if ranking_data['id'] == 0:
@@ -209,7 +207,7 @@ def info_project(request):
                     'ranking': {
                         'id': ranking.id,
                         'rank': ranking.rank,
-                        'last_update': ranking.last_update.strftime('%d/%m/%Y') if ranking.last_update else None,
+                        'last_update': ranking.last_update,
                         'note': ranking.note,
                         'description': ranking.description
                     },
@@ -303,7 +301,7 @@ def list_project(request):
                         'ranking': {
                             'id': ranking.id,
                             'rank': ranking.rank,
-                            'last_update': ranking.last_update.strftime('%d/%m/%Y') if ranking.last_update else None,
+                            'last_update': ranking.last_update,
                             'note': ranking.note,
                             'description': ranking.description
                         },
