@@ -174,6 +174,36 @@ def update_project(request):
 
     return JsonResponse({'error': 'Método não permitido'}, status=405)
 
+# Deletar projeto
+@csrf_exempt
+def delete_project(request):
+
+    # Definir metodo
+    if request.method == 'DELETE':
+
+        try:
+
+            # Carregar dados do json
+            data = json.loads(request.body.decode('utf-8'))
+
+            # Buscar o projeto pelo ID
+            project = get_object_or_404(Project, id=data['id'])
+
+            # Deletar o projeto
+            project.delete()
+
+            # Resposta de sucesso
+            response_data = {
+                'message': 'Projeto, cliente e ranking deletado com sucesso'
+            }
+
+            return JsonResponse(response_data, status=200)
+
+        except Exception as e:
+
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método não permitido'}, status=405)
 
 # Informações do projeto
 @csrf_exempt
@@ -191,7 +221,7 @@ def info_project(request):
             project = get_object_or_404(Project, id=data['id'])
 
             # Buscar o cliente associado ao projeto
-            client = Client.objects.filter(project=project)
+            client = get_object_or_404(Client, project=project)
 
             # Buscar o ranking associado ao projeto
             rankings = Ranking.objects.filter(project=project)
@@ -239,46 +269,6 @@ def info_project(request):
 
     return JsonResponse({'error': 'Método não permitido'}, status=405)
 
-
-# Deletar projeto
-@csrf_exempt
-def delete_project(request):
-
-    # Definir metodo
-    if request.method == 'DELETE':
-
-        try:
-
-            # Carregar dados do json
-            data = json.loads(request.body.decode('utf-8'))
-
-            # Buscar o projeto pelo ID
-            project = get_object_or_404(Project, id=data['id'])
-
-            # Deletar todos os rankings do projeto
-            #rankings = Ranking.objects.filter(project=project)
-            #rankings.delete()
-            
-            # Deletar o cliente associado ao projeto
-            #client = Client.objects.filter(project=project)
-            #client.delete()
-
-            # Deletar o projeto
-            project.delete()
-
-            # Resposta de sucesso
-            response_data = {
-                'message': 'Projeto, cliente e ranking deletado com sucesso'
-            }
-
-            return JsonResponse(response_data, status=200)
-
-        except Exception as e:
-
-            return JsonResponse({'error': str(e)}, status=500)
-
-    return JsonResponse({'error': 'Método não permitido'}, status=405)
-
 # Listar todos os projetos
 @csrf_exempt
 def list_project(request):
@@ -299,7 +289,7 @@ def list_project(request):
             for project in projects:
 
                 # Buscar o cliente associado ao projeto
-                client = Client.objects.filter(project=project)
+                client = get_object_or_404(Client, project=project)
 
                 # Buscar o ranking associado ao projeto
                 rankings = Ranking.objects.filter(project=project)

@@ -3,7 +3,6 @@ from account.models import Credential
 
 # Projeto
 class Project(models.Model):
-    #client = models.ForeignKey(Client, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     key = models.CharField(max_length=20)
     status = models.BooleanField(default=True)
