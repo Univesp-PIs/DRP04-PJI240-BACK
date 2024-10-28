@@ -10,6 +10,8 @@ from django.utils.crypto import get_random_string
 from account.models import Credential
 from .models import Project, Client, Condition, Ranking
 
+from ...modules.mymail.mymail import MyMail
+
 # Validar Token
 @csrf_exempt
 def validate_token(request):
@@ -709,6 +711,48 @@ def list_condition(request):
 
             # Retornar a lista de condições em formato JSON
             return JsonResponse(condition_list, safe=False)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+# --------------------------------------------------------------- MAIL ---------------------------------------------------------------
+
+# Send Mail
+
+@csrf_exempt
+def send_mail(request):
+
+    # Valida o token e retorna o usuário autenticado ou erro JSON
+    user = validate_token(request)
+
+    if isinstance(user, JsonResponse):
+        return user  # Retorna o erro de autenticação diretamente
+    
+    # Verificar se o método é POST
+    if request.method == 'POST':
+
+        try:
+            # Carregar dados do JSON
+            data = json.loads(request.body.decode('utf-8'))
+
+            # Extrair dados necessários
+            login = data['login']
+            password = data['password']
+            recipient = data['recipient']
+            subject = data['subject']
+            body = data['body']
+            attachments = data.get('attachments', None)  # Pegar anexos, se houver
+
+            # Criar instância do MyMail e enviar e-mail
+            mailer = MyMail()
+            result = mailer.mail(login, password, recipient, subject, body, path=attachments['paths'], file=attachments['files'])
+
+            if result['status']:
+                return JsonResponse({'message': 'E-mail enviado com sucesso!'}, status=200)
+            else:
+                return JsonResponse({'error': 'Falha ao enviar o e-mail.'}, status=500)
 
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
