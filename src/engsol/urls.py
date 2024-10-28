@@ -16,5 +16,7 @@ urlpatterns = [
     path('update_condition', views.update_condition, name='update_condition'),
     path('delete_condition', views.delete_condition, name='delete_condition'),
     path('list_condition', views.list_condition, name='list_condition'),
+    path('disable_condition', views.disable_condition, name='disable_condition'),
+    path('toggle_condition', views.toggle_condition, name='toggle_condition')
     
 ]
