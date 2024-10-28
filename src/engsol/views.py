@@ -10,7 +10,7 @@ from django.utils.crypto import get_random_string
 from account.models import Credential
 from .models import Project, Client, Condition, Ranking
 
-from ...modules.mymail.mymail import MyMail
+from ..modules.mymail.mymail import MyMail
 
 # Validar Token
 @csrf_exempt
