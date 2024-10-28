@@ -443,7 +443,7 @@ def delete_condition(request):
 def disable_condition(request):
 
     # Verificar se o método é PATH
-    if request.method == 'PATH':
+    if request.method == 'PATCH':
 
         try:
 
@@ -460,6 +460,38 @@ def disable_condition(request):
             # Resposta de sucesso
             response_data = {
                 'message': 'Condição desabilitada com sucesso'
+            }
+
+            return JsonResponse(response_data, status=200)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+# Altera o Status atual da Condition
+@csrf_exempt
+def toggle_condition(request):
+
+    # Verificar se o método é PATH
+    if request.method == 'PATCH':
+
+        try:
+
+            # Carregar dados do json
+            data = json.loads(request.body.decode('utf-8'))
+
+            # Buscar a condição pelo ID
+            condition = get_object_or_404(Condition, id=data['id'])
+
+            # Alternar o valor do status
+            condition.status = not condition.status
+            condition.save()
+
+            # Resposta de sucesso
+            response_data = {
+                'message': 'Status da condição alternado com sucesso',
+                'new_status': condition.status
             }
 
             return JsonResponse(response_data, status=200)
