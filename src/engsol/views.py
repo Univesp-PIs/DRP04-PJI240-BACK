@@ -15,14 +15,17 @@ from .models import Project, Client, Condition, Ranking
 def validate_token(request):
 
     # Carregar token do request
-    token = request.headers.get('Authorization')
+    auth_header = request.headers.get('Authorization')
 
     # Verificar se o token está presente
-    if not token:
+    if not auth_header:
         return JsonResponse({'error': 'Token não fornecido'}, status=401)
     
     # Validar token
     try:
+
+        # Extrai e decodifica o token do cabeçalho
+        token = auth_header.split(' ')[1]
         
         # Decodificar o token usando a chave secreta
         decoded = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
