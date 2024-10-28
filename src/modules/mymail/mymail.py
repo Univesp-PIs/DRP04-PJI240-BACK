@@ -166,4 +166,7 @@ class MyMail:
             print(self.erro)
             print(aviso)
 
+            # Retorne o erro como parte do dicionário de resultado
+            return {'status': self.status, 'error': str(aviso)}  # Adicione isso
+
         return{'status': self.status}

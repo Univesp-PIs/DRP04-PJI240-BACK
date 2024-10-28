@@ -749,8 +749,10 @@ def send_mail(request):
 
             if result['status']:
                 return JsonResponse({'message': 'E-mail enviado com sucesso!'}, status=200)
+            
             else:
-                return JsonResponse({'error': 'Falha ao enviar o e-mail.'}, status=500)
+                # Retorna o erro do MyMail
+                return JsonResponse({'error': result.get('error', 'Falha ao enviar o e-mail.')}, status=500)
 
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
