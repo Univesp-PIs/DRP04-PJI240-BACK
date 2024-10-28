@@ -1,4 +1,3 @@
-from modules.mylogger.mylogger import MyLogger
 import os
 import smtplib
 from email import encoders
@@ -15,11 +14,6 @@ class MyMail:
         self.sucesso = f'SUCESSO - {__name__}'
         self.falha = f'FALHA - {__name__}'
         self.erro = f'ERRO - {__name__}'
-        
-        # Instancias
-        # Instanciar é uma boa prática e necessário
-        # Não instaciar resulta na abertura de processo diferentes e erros
-        self.my_logger = MyLogger()
 
         # Variaveis especificas
         self.resultado = None
@@ -171,9 +165,5 @@ class MyMail:
             self.status = False
             print(self.erro)
             print(aviso)
-
-            # Alimentar o log
-            self.my_logger.log_error(self.erro)
-            self.my_logger.log_error(str(aviso))
 
         return{'status': self.status}
