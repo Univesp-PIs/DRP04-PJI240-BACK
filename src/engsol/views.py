@@ -1,18 +1,63 @@
+import jwt
+import json
+
+from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-
-from account.models import Credential
-
-from .models import Project, Client, Condition, Ranking
-from django.core import serializers
 from django.shortcuts import get_object_or_404
 from django.utils.crypto import get_random_string
 
-import json
+from account.models import Credential
+from .models import Project, Client, Condition, Ranking
+
+# Validar Token
+@csrf_exempt
+def validate_token(request):
+
+    # Carregar token do request
+    auth_header = request.headers.get('Authorization')
+
+    # Verificar se o token está presente
+    if not auth_header:
+        return JsonResponse({'error': 'Token não fornecido'}, status=401)
+    
+    # Validar token
+    try:
+
+        # Extrai o token do cabeçalho e decodifica
+        token = auth_header.split(' ')[1]
+        
+        # Decodificar o token usando a chave secreta
+        decoded = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+
+        # Pega o id do usuário do token
+        user_id = decoded.get('user_id')
+        user = Credential.objects.get(id=user_id)
+        
+        # Retornar o user_id se o token for válido
+        return user
+
+    except jwt.ExpiredSignatureError:
+        return JsonResponse({'error': 'Token expirado'}, status=401)
+    
+    except jwt.exceptions.InvalidTokenError:
+        return JsonResponse({'error': 'Token inválido'}, status=401)
+    
+    except Credential.DoesNotExist:
+        return JsonResponse({'error': 'Usuário não encontrado'}, status=401)
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 # Criar novo projeto
 @csrf_exempt
 def create_project(request):
+
+    # Valida o token e retorna o usuário autenticado ou erro JSON
+    user = validate_token(request)
+
+    if isinstance(user, JsonResponse):
+        return user  # Retorna o erro de autenticação diretamente
 
     # Definir metodo
     if request.method == 'POST':
