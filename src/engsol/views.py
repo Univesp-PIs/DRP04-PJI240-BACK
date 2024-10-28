@@ -737,6 +737,7 @@ def send_mail(request):
             data = json.loads(request.body.decode('utf-8'))
 
             # Extrair dados necessários
+            type = data['type']
             login = data['login']
             password = data['password']
             recipient = data['recipient']
@@ -745,7 +746,7 @@ def send_mail(request):
 
             # Criar instância do MyMail e enviar e-mail
             mailer = MyMail()
-            result = mailer.mail(login, password, recipient, subject, body)
+            result = mailer.mail(type, login, password, recipient, subject, body)
 
             if result['status']:
                 return JsonResponse({'message': 'E-mail enviado com sucesso!'}, status=200)

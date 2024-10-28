@@ -20,12 +20,13 @@ class MyMail:
         self.lista_resultado = None
 
     # Configuração do servidor SMTP do Gmail
-    def mail(self, login, password, recipient, head, body, path = None, file = None):
+    def mail(self, type, login, password, recipient, head, body, path = None, file = None):
 
         """
         Função para enviar um e-mail podendo conter um ou mais documentos em anexos.
 
         Args:
+            type (str): Tipo de e-mail ('gmail', 'outlook', etc.)
             login (str): Nome e sobrenome do usuário com e-mail.
             password (str): Senha do e-mail que irá enviar a mensagem.
             recipient (str/list): E-mail completo de um ou mais destinatarios.
@@ -81,12 +82,28 @@ class MyMail:
             # Retornar o valor das credenciais
             smtp_username = login
             smtp_password = password
+            smtp_type = type
 
             # Configurar servidor SMTP
-            smtp_server = 'smtp.gmail.com'
+            #smtp_server = 'smtp.gmail.com'
 
             # Configurar porta SMTP
-            smtp_port = 587
+            #smtp_port = 587
+
+            # Configurações do servidor SMTP com base no tipo de e-mail
+
+            # Gmail server
+            if smtp_type == 'gmail':
+                smtp_server = 'smtp.gmail.com'
+                smtp_port = 587
+
+            # Outlook server
+            elif smtp_type == 'outlook':
+                smtp_server = 'smtp.office365.com'
+                smtp_port = 587
+                
+            else:
+                return {'status': False, 'error': 'Tipo de e-mail não suportado.'}
 
             # Criar mensagem
             message = MIMEMultipart()
