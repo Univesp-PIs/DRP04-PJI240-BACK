@@ -15,17 +15,14 @@ from .models import Project, Client, Condition, Ranking
 def validate_token(request):
 
     # Carregar token do request
-    auth_header = request.headers.get('Authorization')
+    token = request.headers.get('Authorization')
 
     # Verificar se o token está presente
-    if not auth_header:
+    if not token:
         return JsonResponse({'error': 'Token não fornecido'}, status=401)
     
     # Validar token
     try:
-
-        # Extrai o token do cabeçalho e decodifica
-        token = auth_header.split(' ')[1]
         
         # Decodificar o token usando a chave secreta
         decoded = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
@@ -139,6 +136,12 @@ def create_project(request):
 @csrf_exempt
 def update_project(request):
 
+    # Valida o token e retorna o usuário autenticado ou erro JSON
+    user = validate_token(request)
+
+    if isinstance(user, JsonResponse):
+        return user  # Retorna o erro de autenticação diretamente
+
     # Definir metodo
     if request.method == 'PUT':
 
@@ -223,6 +226,12 @@ def update_project(request):
 @csrf_exempt
 def delete_project(request):
 
+    # Valida o token e retorna o usuário autenticado ou erro JSON
+    user = validate_token(request)
+
+    if isinstance(user, JsonResponse):
+        return user  # Retorna o erro de autenticação diretamente
+
     # Definir metodo
     if request.method == 'DELETE':
 
@@ -253,6 +262,12 @@ def delete_project(request):
 # Informações do projeto
 @csrf_exempt
 def info_project(request):
+
+    # Valida o token e retorna o usuário autenticado ou erro JSON
+    user = validate_token(request)
+
+    if isinstance(user, JsonResponse):
+        return user  # Retorna o erro de autenticação diretamente
 
     # Definir metodo
     if request.method == 'GET':
@@ -317,6 +332,12 @@ def info_project(request):
 # Listar todos os projetos
 @csrf_exempt
 def list_project(request):
+
+    # Valida o token e retorna o usuário autenticado ou erro JSON
+    user = validate_token(request)
+
+    if isinstance(user, JsonResponse):
+        return user  # Retorna o erro de autenticação diretamente
 
     # Verificar se o método é GET
     if request.method == 'GET':
@@ -386,6 +407,12 @@ def list_project(request):
 # Buscar informações do projeto
 @csrf_exempt
 def search_project(request):
+
+    # Valida o token e retorna o usuário autenticado ou erro JSON
+    user = validate_token(request)
+
+    if isinstance(user, JsonResponse):
+        return user  # Retorna o erro de autenticação diretamente
 
     # Definir metodo
     if request.method == 'GET':
@@ -460,6 +487,12 @@ def search_project(request):
 @csrf_exempt
 def create_condition(request):
 
+    # Valida o token e retorna o usuário autenticado ou erro JSON
+    user = validate_token(request)
+
+    if isinstance(user, JsonResponse):
+        return user  # Retorna o erro de autenticação diretamente
+
     # Verificar se o método é POST
     if request.method == 'POST':
 
@@ -492,6 +525,12 @@ def create_condition(request):
 # Update Condition
 @csrf_exempt
 def update_condition(request):
+
+    # Valida o token e retorna o usuário autenticado ou erro JSON
+    user = validate_token(request)
+
+    if isinstance(user, JsonResponse):
+        return user  # Retorna o erro de autenticação diretamente
 
     # Verificar se o método é PUT
     if request.method == 'PUT':
@@ -528,6 +567,12 @@ def update_condition(request):
 @csrf_exempt
 def delete_condition(request):
 
+    # Valida o token e retorna o usuário autenticado ou erro JSON
+    user = validate_token(request)
+
+    if isinstance(user, JsonResponse):
+        return user  # Retorna o erro de autenticação diretamente
+
     # Verificar se o método é DELETE
     if request.method == 'DELETE':
 
@@ -557,6 +602,12 @@ def delete_condition(request):
 # Desabilitar Condition
 @csrf_exempt
 def disable_condition(request):
+
+    # Valida o token e retorna o usuário autenticado ou erro JSON
+    user = validate_token(request)
+
+    if isinstance(user, JsonResponse):
+        return user  # Retorna o erro de autenticação diretamente
 
     # Verificar se o método é PATH
     if request.method == 'PATCH':
@@ -589,6 +640,12 @@ def disable_condition(request):
 @csrf_exempt
 def toggle_condition(request):
 
+    # Valida o token e retorna o usuário autenticado ou erro JSON
+    user = validate_token(request)
+
+    if isinstance(user, JsonResponse):
+        return user  # Retorna o erro de autenticação diretamente
+
     # Verificar se o método é PATH
     if request.method == 'PATCH':
 
@@ -620,6 +677,12 @@ def toggle_condition(request):
 # List Condition
 @csrf_exempt
 def list_condition(request):
+
+    # Valida o token e retorna o usuário autenticado ou erro JSON
+    user = validate_token(request)
+
+    if isinstance(user, JsonResponse):
+        return user  # Retorna o erro de autenticação diretamente
 
     # Verificar se o método é GET
     if request.method == 'GET':
