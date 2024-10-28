@@ -338,6 +338,77 @@ def list_project(request):
 
     return JsonResponse({'error': 'Método não permitido'}, status=405)
 
+# Buscar informações do projeto
+@csrf_exempt
+def search_project(request):
+
+    # Definir metodo
+    if request.method == 'GET':
+
+        try:
+
+            # Carregar dados do json
+            data = json.loads(request.body.decode('utf-8'))
+
+            # Buscar o projeto com base no campo fornecido: id, key ou name
+            if 'id' in data:
+                project = get_object_or_404(Project, id=data['id'])
+
+            elif 'key' in data:
+                project = get_object_or_404(Project, key=data['key'])
+
+            else:
+                return JsonResponse({'error': 'Parâmetro de busca inválido'}, status=400)
+
+            # Buscar o cliente associado ao projeto
+            client = get_object_or_404(Client, project=project)
+
+            # Buscar o ranking associado ao projeto
+            rankings = Ranking.objects.filter(project=project)
+
+            # Cria lista para timeline
+            timeline = []
+
+            # Preenche a lista da timeline com dados dos rankings
+            for ranking in rankings:
+
+                # Adiciona dados ao timeline
+                timeline.append({
+                    'ranking': {
+                        'id': ranking.id,
+                        'rank': ranking.rank,
+                        'last_update': ranking.last_update,
+                        'note': ranking.note,
+                        'description': ranking.description
+                    },
+                    'condition': {
+                        'id': ranking.condition.id,
+                        'name': ranking.condition.name
+                    }
+                })
+
+            # Montar o objeto de resposta com dados do projeto, cliente e timeline
+            response_data = {
+                'project': {
+                    'id': project.id,
+                    'name': project.name,
+                    'key': project.key
+                },
+                'client': {
+                    'id': client.id,
+                    'name': client.name,
+                    'email': client.email
+                },
+                'timeline': timeline
+            }
+
+            return JsonResponse(response_data)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método não permitido'}, status=405)
+
 # --------------------------------------------------------------- CONDITION ---------------------------------------------------------------
 
 # Create Condition

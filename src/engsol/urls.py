@@ -10,6 +10,7 @@ urlpatterns = [
     path('delete_project', views.delete_project, name='delete_project'),
     path('info_project', views.info_project, name='info_project'),
     path('list_project', views.list_project, name='list_project'),
+    path('search_project', views.search_project, name='search_project'),
 
     # Condition
     path('create_condition', views.create_condition, name='create_condiotion'),
