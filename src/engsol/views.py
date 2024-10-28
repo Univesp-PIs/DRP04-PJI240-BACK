@@ -396,7 +396,8 @@ def update_condition(request):
                 'message': 'Condição atualizada com sucesso',
                 'condition': {
                     'id': condition.id,
-                    'name': condition.name
+                    'name': condition.name,
+                    'status': condition.status
                 }
             }
 
@@ -437,6 +438,37 @@ def delete_condition(request):
 
     return JsonResponse({'error': 'Método não permitido'}, status=405)
 
+# Desabilitar Condition
+@csrf_exempt
+def disable_condition(request):
+
+    # Verificar se o método é PATH
+    if request.method == 'PATH':
+
+        try:
+
+            # Carregar dados do json
+            data = json.loads(request.body.decode('utf-8'))
+
+            # Buscar a condição pelo ID
+            condition = get_object_or_404(Condition, id=data['id'])
+
+            # Alterar o status para False
+            condition.status = False
+            condition.save()
+
+            # Resposta de sucesso
+            response_data = {
+                'message': 'Condição desabilitada com sucesso'
+            }
+
+            return JsonResponse(response_data, status=200)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método não permitido'}, status=405)
+
 # List Condition
 @csrf_exempt
 def list_condition(request):
@@ -456,7 +488,8 @@ def list_condition(request):
             for condition in conditions:
                 condition_data = {
                     'id': condition.id,
-                    'name': condition.name
+                    'name': condition.name,
+                    'status': condition.status
                 }
                 condition_list.append(condition_data)
 
