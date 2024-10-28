@@ -743,11 +743,10 @@ def send_mail(request):
             recipient = data['recipient']
             subject = data['subject']
             body = data['body']
-            attachments = data.get('attachments', None)  # Pegar anexos, se houver
 
             # Criar instância do MyMail e enviar e-mail
             mailer = MyMail()
-            result = mailer.mail(login, password, recipient, subject, body, path=attachments['paths'], file=attachments['files'])
+            result = mailer.mail(login, password, recipient, subject, body)
 
             if result['status']:
                 return JsonResponse({'message': 'E-mail enviado com sucesso!'}, status=200)
