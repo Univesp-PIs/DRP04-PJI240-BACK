@@ -549,6 +549,7 @@ def update_condition(request):
 
             # Atualizar os dados da condição
             condition.name = data['name']
+            condition.status = data['status']
             condition.save()
 
             # Resposta de sucesso
