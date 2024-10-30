@@ -242,11 +242,14 @@ def delete_project(request):
 
         try:
 
+            # Buscar a chave do curriculo
+            id = request.GET.get('id', None)
+
             # Carregar dados do json
             data = json.loads(request.body.decode('utf-8'))
 
             # Buscar o projeto pelo ID
-            project = get_object_or_404(Project, id=data['id'])
+            project = get_object_or_404(Project, id=id)
 
             # Deletar o projeto
             project.delete()
@@ -412,12 +415,6 @@ def list_project(request):
 # Buscar informações do projeto
 @csrf_exempt
 def search_project(request):
-
-    # Valida o token e retorna o usuário autenticado ou erro JSON
-    user = validate_token(request)
-
-    if isinstance(user, JsonResponse):
-        return user  # Retorna o erro de autenticação diretamente
 
     # Definir metodo
     if request.method == 'GET':
