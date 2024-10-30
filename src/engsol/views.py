@@ -242,11 +242,11 @@ def delete_project(request):
 
         try:
 
-            # Buscar a chave do curriculo
+            # Buscar parametros na url
             id = request.GET.get('id', None)
 
             # Carregar dados do json
-            data = json.loads(request.body.decode('utf-8'))
+            #data = json.loads(request.body.decode('utf-8'))
 
             # Buscar o projeto pelo ID
             project = get_object_or_404(Project, id=id)
