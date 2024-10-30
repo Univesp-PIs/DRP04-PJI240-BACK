@@ -245,6 +245,9 @@ def delete_project(request):
             # Buscar parametros na url
             id = request.GET.get('id', None)
 
+            # Carregar dados do json
+            #data = json.loads(request.body.decode('utf-8'))
+
             # Buscar o projeto pelo ID
             project = get_object_or_404(Project, id=id)
 
@@ -281,6 +284,9 @@ def info_project(request):
 
             # Buscar parametros na url
             id = request.GET.get('id', None)
+
+            # Carregar dados do json
+            #data = json.loads(request.body.decode('utf-8'))
 
             # Buscar o projeto pelo ID
             project = get_object_or_404(Project, id=id)
@@ -421,8 +427,21 @@ def search_project(request):
             # Buscar parametros na url
             key = request.GET.get('key', None)
 
+            # Carregar dados do json
+            #data = json.loads(request.body.decode('utf-8'))
+
             # Buscar o projeto com base no campo fornecido
             project = get_object_or_404(Project, key=key)
+
+            # Buscar o projeto com base no campo fornecido: id, key ou name
+            #if 'id' in data:
+            #    project = get_object_or_404(Project, id=data['id'])
+
+            #elif 'key' in data:
+            #    project = get_object_or_404(Project, key=data['key'])
+
+            #else:
+            #    return JsonResponse({'error': 'Parâmetro de busca inválido'}, status=400)
 
             # Buscar o cliente associado ao projeto
             client = get_object_or_404(Client, project=project)
@@ -571,11 +590,11 @@ def delete_condition(request):
 
         try:
 
-            # Buscar parametros na url
-            id = request.GET.get('id', None)
+            # Carregar dados do json
+            data = json.loads(request.body.decode('utf-8'))
 
             # Buscar a condição pelo ID
-            condition = get_object_or_404(Condition, id=id)
+            condition = get_object_or_404(Condition, id=data['id'])
 
             # Deletar a condição
             condition.delete()
@@ -607,11 +626,11 @@ def disable_condition(request):
 
         try:
 
-            # Buscar parametros na url
-            id = request.GET.get('id', None)
+            # Carregar dados do json
+            data = json.loads(request.body.decode('utf-8'))
 
             # Buscar a condição pelo ID
-            condition = get_object_or_404(Condition, id=id)
+            condition = get_object_or_404(Condition, id=data['id'])
 
             # Alterar o status para False
             condition.status = False
@@ -644,11 +663,11 @@ def toggle_condition(request):
 
         try:
 
-            # Buscar parametros na url
-            id = request.GET.get('id', None)
+            # Carregar dados do json
+            data = json.loads(request.body.decode('utf-8'))
 
             # Buscar a condição pelo ID
-            condition = get_object_or_404(Condition, id=id)
+            condition = get_object_or_404(Condition, id=data['id'])
 
             # Alternar o valor do status
             condition.status = not condition.status
