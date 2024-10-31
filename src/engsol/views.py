@@ -354,7 +354,6 @@ def list_project(request):
 
             # Criar uma lista para armazenar os dados dos projetos
             project_list = []
-            timeline = []
             
             # Iterar sobre cada projeto e montar o JSON de resposta
             for project in projects:
@@ -364,6 +363,9 @@ def list_project(request):
 
                 # Buscar o ranking associado ao projeto
                 rankings = Ranking.objects.filter(project=project)
+
+                # Criar uma lista para armazenar os dados dos projetos
+                timeline = []
 
                 # Preenche a lista da timeline com dados dos rankings
                 for ranking in rankings:
@@ -383,6 +385,9 @@ def list_project(request):
                         }
                     })
 
+                # Atriuir resultado a nova lista
+                timeline_ok = timeline
+
                 # Montar o objeto de resposta com dados do projeto, cliente e timeline
                 project_data = {
                     'project': {
@@ -395,7 +400,7 @@ def list_project(request):
                         'name': client.name,
                         'email': client.email
                     },
-                    'timeline': timeline
+                    'timeline': timeline_ok
                 }
 
                 # Limpar timeline para o próximo projeto
