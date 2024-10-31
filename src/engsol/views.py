@@ -385,9 +385,6 @@ def list_project(request):
                         }
                     })
 
-                # Atriuir resultado a nova lista
-                timeline_ok = timeline
-
                 # Montar o objeto de resposta com dados do projeto, cliente e timeline
                 project_data = {
                     'project': {
@@ -400,7 +397,7 @@ def list_project(request):
                         'name': client.name,
                         'email': client.email
                     },
-                    'timeline': timeline_ok
+                    'timeline': timeline
                 }
 
                 # Limpar timeline para o próximo projeto
