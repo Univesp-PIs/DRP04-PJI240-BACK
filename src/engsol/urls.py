@@ -21,7 +21,7 @@ urlpatterns = [
     path('toggle_condition', views.toggle_condition, name='toggle_condition'),
 
     # Mail
-    path('send_mail', views.send_mail, name='send_mail')
+    path('send_mail', views.send_mail, name='send_mail'),
 
     # Note
     path('create_note', views.create_note, name='create_note'),
