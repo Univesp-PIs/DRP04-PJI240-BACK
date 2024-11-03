@@ -707,6 +707,101 @@ def list_condition(request):
 
     return JsonResponse({'error': 'Método não permitido'}, status=405)
 
+# --------------------------------------------------------------- Note ---------------------------------------------------------------
+
+@csrf_exempt
+def create_note(request):
+
+    # Verificar se o método é POST
+    if request.method == 'POST':
+
+        try:
+
+            # Carregar dados do json
+            data = json.loads(request.body.decode('utf-8'))
+
+            # Criar uma nova condição
+            note = Note.objects.create(
+                name=data['name']
+            )
+
+            # Resposta de sucesso
+            response_data = {
+                'message': 'Condição criada com sucesso',
+                'note': {
+                    'id': note.id,
+                    'name': note.name
+                }
+            }
+
+            return JsonResponse(response_data, status=201)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+# Delete Note
+@csrf_exempt
+def delete_note(request):
+
+    # Verificar se o método é DELETE
+    if request.method == 'DELETE':
+
+        try:
+
+            # Carregar dados do json
+            data = json.loads(request.body.decode('utf-8'))
+
+            # Buscar a condição pelo ID
+            note = get_object_or_404(Note, id=data['id'])
+
+            # Deletar a condição
+            note.delete()
+
+            # Resposta de sucesso
+            response_data = {
+                'message': 'nota deletada com sucesso!'
+            }
+
+            return JsonResponse(response_data, status=200)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+# Edit Note
+@csrf_exempt
+def edit_note(request):
+
+    # Verificar se o método é PUT
+    if request.method == 'PUT':
+
+        try:
+
+            # Carregar dados do json
+            data = json.loads(request.body.decode('utf-8'))
+
+            # Buscar a condição pelo ID
+            note = get_object_or_404(Note, id=data['id'])
+            newNote = data['note']
+            note.name = newNote
+            # Editar a condição
+            note.save()
+
+            # Resposta de sucesso
+            response_data = {
+                'message': 'nota editada com sucesso!'
+            }
+
+            return JsonResponse(response_data, status=200)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método não permitido'}, status=406)
+
 # --------------------------------------------------------------- MAIL ---------------------------------------------------------------
 
 # Send Mail
