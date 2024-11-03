@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.crypto import get_random_string
 
 from account.models import Credential
-from .models import Project, Client, Condition, Ranking
+from .models import Project, Client, Condition, Ranking, Note
 
 from modules.mymail.mymail import MyMail
 
