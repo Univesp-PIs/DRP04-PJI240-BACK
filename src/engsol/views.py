@@ -1,3 +1,4 @@
+
 import jwt
 import json
 
@@ -55,12 +56,13 @@ def validate_token(request):
 @csrf_exempt
 def create_project(request):
 
+
     # Valida o token e retorna o usuário autenticado ou erro JSON
     user = validate_token(request)
 
     if isinstance(user, JsonResponse):
         return user  # Retorna o erro de autenticação diretamente
-
+      
     # Definir metodo
     if request.method == 'POST':
 
@@ -74,6 +76,7 @@ def create_project(request):
             client_data = data['client']
             timeline = data['timeline']
 
+
             # Inserir dados do projeto
             project = Project.objects.create(
                 name=project_data['name'],
@@ -86,6 +89,7 @@ def create_project(request):
                 name=client_data['name'],
                 email=client_data['email']
             )
+
 
             # Criar status e rankings na timeline
             for timeline_item in timeline:
@@ -107,6 +111,7 @@ def create_project(request):
                     )
 
                 else:
+
 
                     # Obter a condição
                     condition = Condition.objects.get(pk=condition_id)
@@ -141,6 +146,7 @@ def create_project(request):
 @csrf_exempt
 def update_project(request):
 
+
     # Valida o token e retorna o usuário autenticado ou erro JSON
     user = validate_token(request)
 
@@ -155,6 +161,7 @@ def update_project(request):
             # Carregar dados do json
             data = json.loads(request.body.decode('utf-8'))
 
+
             # Carregar dados das repartições do json
             project_data = data['project']
             client_data = data['client']
@@ -166,6 +173,7 @@ def update_project(request):
             project.save()
 
             # Atualizar cliente
+
             client = get_object_or_404(Client, project=project)
             client.name = client_data['name']
             client.email = client_data['email']
@@ -176,6 +184,7 @@ def update_project(request):
 
                 # Obter dados por itens
                 ranking_data = timeline_item['ranking']
+
                 condition_data = timeline_item['condition']
 
                 # Carregar dados do status
@@ -184,13 +193,14 @@ def update_project(request):
 
                 # Verificar se a condição já existe ou precisa ser criada
                 if condition_id == 0:
-                    
+                
                     # Criar novo condition
                     condition = Condition.objects.create(
                         name=condition_data['name']
                     )
 
                 else:
+
 
                     # Obter a condição
                     condition = Condition.objects.get(pk=condition_id)
@@ -203,6 +213,7 @@ def update_project(request):
                         project=project,
                         condition=condition,
                         rank=ranking_data['rank'],
+
                         last_update=ranking_data.get('last_update', None),
                         note=ranking_data['note'],
                         description=ranking_data.get('description', None)
@@ -226,6 +237,7 @@ def update_project(request):
             return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'error': 'Método não permitido'}, status=405)
+
 
 # Deletar projeto
 @csrf_exempt
@@ -334,6 +346,7 @@ def info_project(request):
 
     return JsonResponse({'error': 'Método não permitido'}, status=405)
 
+
 # Listar todos os projetos
 @csrf_exempt
 def list_project(request):
@@ -348,7 +361,6 @@ def list_project(request):
     if request.method == 'GET':
 
         try:
-
             # Buscar todos os projetos
             projects = Project.objects.all()
 
@@ -393,6 +405,7 @@ def list_project(request):
                         'key': project.key
                     },
                     'client': {
+
                         'id': client.id,
                         'name': client.name,
                         'email': client.email
@@ -572,7 +585,6 @@ def delete_condition(request):
     if request.method == 'DELETE':
 
         try:
-
             # Buscar parametros na url
             id = request.GET.get('id', None)
 
