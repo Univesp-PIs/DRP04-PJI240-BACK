@@ -27,3 +27,7 @@ jobs:
       run: |
         cd src
         coverage run manage.py test
+    - name: Coverage
+      run: |
+        cd src
+        coverage report --fail-under=70
