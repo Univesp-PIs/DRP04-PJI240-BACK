@@ -190,6 +190,7 @@ def update_project(request):
                 # Carregar dados do status
                 condition_id = condition_data.get('id', 0)
                 ranking_id = ranking_data.get('id', 0)
+                ranking_delete = ranking_data.get('delete', False)
 
                 # Verificar se a condição já existe ou precisa ser criada
                 if condition_id == 0:
@@ -201,12 +202,11 @@ def update_project(request):
 
                 else:
 
-
                     # Obter a condição
                     condition = Condition.objects.get(pk=condition_id)
 
                 # Verificar se o ranking já existe ou precisa ser criado
-                if ranking_data['id'] == 0:
+                if ranking_id == 0:
 
                     # Criar novo ranking
                     ranking = Ranking.objects.create(
@@ -217,18 +217,27 @@ def update_project(request):
                         last_update=ranking_data.get('last_update', None),
                         note=ranking_data['note'],
                         description=ranking_data.get('description', None)
-                    )
+                    )                   
 
                 else:
 
-                    # Atualizar ranking existente
-                    ranking = get_object_or_404(Ranking, id=ranking_id)
-                    ranking.condition = condition
-                    ranking.rank = ranking_data['rank']
-                    ranking.last_update = ranking_data['last_update']
-                    ranking.note = ranking_data['note']
-                    ranking.description = ranking_data.get('description', None)
-                    ranking.save()
+                    # Verificar condição para deletar
+                    if ranking_delete:
+
+                        # Deletar ranking
+                        ranking = get_object_or_404(Ranking, id=ranking_id)
+                        ranking.delete()
+
+                    else:
+
+                        # Atualizar ranking existente
+                        ranking = get_object_or_404(Ranking, id=ranking_id)
+                        ranking.condition = condition
+                        ranking.rank = ranking_data['rank']
+                        ranking.last_update = ranking_data['last_update']
+                        ranking.note = ranking_data['note']
+                        ranking.description = ranking_data.get('description', None)
+                        ranking.save()
 
             response_data = {'message': 'Projeto atualizado com sucesso'}
             return JsonResponse(response_data, status=200)
