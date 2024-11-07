@@ -61,24 +61,5 @@ class LoginTestCase(TestCase):
         response_data = json.loads(response_content)
 
         self.assertEqual(response.status_code, 400)
-        print(response_data)
         self.assertEqual(response_data['errors']['email'][0]['message'], 'Este campo é obrigatório.')
         self.assertEqual(response_data['errors']['password'][0]['message'], 'Este campo é obrigatório.')
-        
-# class SignUpTestCase(TestCase):
-#     @classmethod
-#     def setUpTestData(cls):
-#         cls.client = Client()
-#         cls.url = reverse('signup')
-#         cls.user = Credential.objects.create(
-#             name="user123", 
-#             email="janedoe@test.com", 
-#             password="password456")
-    
-#     def test_login_with_success(self):
-#         data = {
-#             "email": "janedoe@test.com",
-#             "password": "password456"
-#         }
-#         response = self.client.post(self.url, data=json.dumps(data), content_type='application/json')
-#         self.assertEqual(response.status_code, 200)
