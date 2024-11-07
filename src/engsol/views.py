@@ -96,7 +96,7 @@ def create_project(request):
 
                 # Obter dados por itens
                 ranking_data = timeline_item['ranking']
-                condition_data = timeline_item['condition']
+                condition_data = ranking_data['condition']
 
                 # Carregar dados do status
                 condition_id = condition_data.get('id', 0)
@@ -185,7 +185,7 @@ def update_project(request):
                 # Obter dados por itens
                 ranking_data = timeline_item['ranking']
 
-                condition_data = timeline_item['condition']
+                condition_data = ranking_data['condition']
 
                 # Carregar dados do status
                 condition_id = condition_data.get('id', 0)
@@ -325,11 +325,11 @@ def info_project(request):
                         'rank': ranking.rank,
                         'last_update': ranking.last_update,
                         'note': ranking.note,
-                        'description': ranking.description
-                    },
-                    'condition': {
-                        'id': ranking.condition.id,
-                        'name': ranking.condition.name
+                        'description': ranking.description,
+                        'condition': {
+                            'id': ranking.condition.id,
+                            'name': ranking.condition.name
+                        }
                     }
                 })
 
@@ -398,11 +398,11 @@ def list_project(request):
                             'rank': ranking.rank,
                             'last_update': ranking.last_update,
                             'note': ranking.note,
-                            'description': ranking.description
-                        },
-                        'condition': {
-                            'id': ranking.condition.id,
-                            'name': ranking.condition.name
+                            'description': ranking.description,
+                            'condition': {
+                                'id': ranking.condition.id,
+                                'name': ranking.condition.name
+                            }
                         }
                     })
 
@@ -467,11 +467,11 @@ def search_project(request):
                         'rank': ranking.rank,
                         'last_update': ranking.last_update,
                         'note': ranking.note,
-                        'description': ranking.description
-                    },
-                    'condition': {
-                        'id': ranking.condition.id,
-                        'name': ranking.condition.name
+                        'description': ranking.description,
+                        'condition': {
+                            'id': ranking.condition.id,
+                            'name': ranking.condition.name
+                        }
                     }
                 })
 
