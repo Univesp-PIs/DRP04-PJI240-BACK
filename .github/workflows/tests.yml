@@ -26,7 +26,7 @@ jobs:
     - name: Run Tests
       run: |
         cd src
-        coverage run manage.py test --keepdb=false
+        coverage run manage.py test
     - name: Coverage
       run: |
         cd src
