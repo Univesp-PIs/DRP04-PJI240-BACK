@@ -1,4 +1,3 @@
-
 import jwt
 import json
 
@@ -9,7 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.crypto import get_random_string
 
 from account.models import Credential
-from .models import Project, Client, Condition, Ranking, Note
+from .models import Project, Client, Condition, Ranking
 
 from modules.mymail.mymail import MyMail
 
@@ -56,13 +55,12 @@ def validate_token(request):
 @csrf_exempt
 def create_project(request):
 
-
     # Valida o token e retorna o usuário autenticado ou erro JSON
     user = validate_token(request)
 
     if isinstance(user, JsonResponse):
         return user  # Retorna o erro de autenticação diretamente
-      
+
     # Definir metodo
     if request.method == 'POST':
 
@@ -75,7 +73,6 @@ def create_project(request):
             project_data = data['project']
             client_data = data['client']
             timeline = data['timeline']
-
 
             # Inserir dados do projeto
             project = Project.objects.create(
@@ -90,13 +87,12 @@ def create_project(request):
                 email=client_data['email']
             )
 
-
             # Criar status e rankings na timeline
             for timeline_item in timeline:
 
                 # Obter dados por itens
                 ranking_data = timeline_item['ranking']
-                condition_data = ranking_data['condition']
+                condition_data = timeline_item['condition']
 
                 # Carregar dados do status
                 condition_id = condition_data.get('id', 0)
@@ -111,7 +107,6 @@ def create_project(request):
                     )
 
                 else:
-
 
                     # Obter a condição
                     condition = Condition.objects.get(pk=condition_id)
@@ -146,7 +141,6 @@ def create_project(request):
 @csrf_exempt
 def update_project(request):
 
-
     # Valida o token e retorna o usuário autenticado ou erro JSON
     user = validate_token(request)
 
@@ -161,7 +155,6 @@ def update_project(request):
             # Carregar dados do json
             data = json.loads(request.body.decode('utf-8'))
 
-
             # Carregar dados das repartições do json
             project_data = data['project']
             client_data = data['client']
@@ -173,7 +166,6 @@ def update_project(request):
             project.save()
 
             # Atualizar cliente
-
             client = get_object_or_404(Client, project=project)
             client.name = client_data['name']
             client.email = client_data['email']
@@ -184,17 +176,15 @@ def update_project(request):
 
                 # Obter dados por itens
                 ranking_data = timeline_item['ranking']
-
-                condition_data = ranking_data['condition']
+                condition_data = timeline_item['condition']
 
                 # Carregar dados do status
                 condition_id = condition_data.get('id', 0)
                 ranking_id = ranking_data.get('id', 0)
-                ranking_delete = ranking_data.get('delete', False)
 
                 # Verificar se a condição já existe ou precisa ser criada
                 if condition_id == 0:
-                
+                    
                     # Criar novo condition
                     condition = Condition.objects.create(
                         name=condition_data['name']
@@ -206,38 +196,28 @@ def update_project(request):
                     condition = Condition.objects.get(pk=condition_id)
 
                 # Verificar se o ranking já existe ou precisa ser criado
-                if ranking_id == 0:
+                if ranking_data['id'] == 0:
 
                     # Criar novo ranking
                     ranking = Ranking.objects.create(
                         project=project,
                         condition=condition,
                         rank=ranking_data['rank'],
-
                         last_update=ranking_data.get('last_update', None),
                         note=ranking_data['note'],
                         description=ranking_data.get('description', None)
-                    )                   
+                    )
 
                 else:
 
-                    # Verificar condição para deletar
-                    if ranking_delete:
-
-                        # Deletar ranking
-                        ranking = get_object_or_404(Ranking, id=ranking_id)
-                        ranking.delete()
-
-                    else:
-
-                        # Atualizar ranking existente
-                        ranking = get_object_or_404(Ranking, id=ranking_id)
-                        ranking.condition = condition
-                        ranking.rank = ranking_data['rank']
-                        ranking.last_update = ranking_data['last_update']
-                        ranking.note = ranking_data['note']
-                        ranking.description = ranking_data.get('description', None)
-                        ranking.save()
+                    # Atualizar ranking existente
+                    ranking = get_object_or_404(Ranking, id=ranking_id)
+                    ranking.condition = condition
+                    ranking.rank = ranking_data['rank']
+                    ranking.last_update = ranking_data['last_update']
+                    ranking.note = ranking_data['note']
+                    ranking.description = ranking_data.get('description', None)
+                    ranking.save()
 
             response_data = {'message': 'Projeto atualizado com sucesso'}
             return JsonResponse(response_data, status=200)
@@ -246,7 +226,6 @@ def update_project(request):
             return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'error': 'Método não permitido'}, status=405)
-
 
 # Deletar projeto
 @csrf_exempt
@@ -265,6 +244,9 @@ def delete_project(request):
 
             # Buscar parametros na url
             id = request.GET.get('id', None)
+
+            # Carregar dados do json
+            #data = json.loads(request.body.decode('utf-8'))
 
             # Buscar o projeto pelo ID
             project = get_object_or_404(Project, id=id)
@@ -303,6 +285,9 @@ def info_project(request):
             # Buscar parametros na url
             id = request.GET.get('id', None)
 
+            # Carregar dados do json
+            #data = json.loads(request.body.decode('utf-8'))
+
             # Buscar o projeto pelo ID
             project = get_object_or_404(Project, id=id)
 
@@ -325,11 +310,11 @@ def info_project(request):
                         'rank': ranking.rank,
                         'last_update': ranking.last_update,
                         'note': ranking.note,
-                        'description': ranking.description,
-                        'condition': {
-                            'id': ranking.condition.id,
-                            'name': ranking.condition.name
-                        }
+                        'description': ranking.description
+                    },
+                    'condition': {
+                        'id': ranking.condition.id,
+                        'name': ranking.condition.name
                     }
                 })
 
@@ -355,7 +340,6 @@ def info_project(request):
 
     return JsonResponse({'error': 'Método não permitido'}, status=405)
 
-
 # Listar todos os projetos
 @csrf_exempt
 def list_project(request):
@@ -370,11 +354,13 @@ def list_project(request):
     if request.method == 'GET':
 
         try:
+
             # Buscar todos os projetos
             projects = Project.objects.all()
 
             # Criar uma lista para armazenar os dados dos projetos
             project_list = []
+            timeline = []
             
             # Iterar sobre cada projeto e montar o JSON de resposta
             for project in projects:
@@ -384,9 +370,6 @@ def list_project(request):
 
                 # Buscar o ranking associado ao projeto
                 rankings = Ranking.objects.filter(project=project)
-
-                # Criar uma lista para armazenar os dados dos projetos
-                timeline = []
 
                 # Preenche a lista da timeline com dados dos rankings
                 for ranking in rankings:
@@ -398,11 +381,11 @@ def list_project(request):
                             'rank': ranking.rank,
                             'last_update': ranking.last_update,
                             'note': ranking.note,
-                            'description': ranking.description,
-                            'condition': {
-                                'id': ranking.condition.id,
-                                'name': ranking.condition.name
-                            }
+                            'description': ranking.description
+                        },
+                        'condition': {
+                            'id': ranking.condition.id,
+                            'name': ranking.condition.name
                         }
                     })
 
@@ -414,7 +397,6 @@ def list_project(request):
                         'key': project.key
                     },
                     'client': {
-
                         'id': client.id,
                         'name': client.name,
                         'email': client.email
@@ -445,8 +427,21 @@ def search_project(request):
             # Buscar parametros na url
             key = request.GET.get('key', None)
 
+            # Carregar dados do json
+            #data = json.loads(request.body.decode('utf-8'))
+
             # Buscar o projeto com base no campo fornecido
             project = get_object_or_404(Project, key=key)
+
+            # Buscar o projeto com base no campo fornecido: id, key ou name
+            #if 'id' in data:
+            #    project = get_object_or_404(Project, id=data['id'])
+
+            #elif 'key' in data:
+            #    project = get_object_or_404(Project, key=data['key'])
+
+            #else:
+            #    return JsonResponse({'error': 'Parâmetro de busca inválido'}, status=400)
 
             # Buscar o cliente associado ao projeto
             client = get_object_or_404(Client, project=project)
@@ -467,11 +462,11 @@ def search_project(request):
                         'rank': ranking.rank,
                         'last_update': ranking.last_update,
                         'note': ranking.note,
-                        'description': ranking.description,
-                        'condition': {
-                            'id': ranking.condition.id,
-                            'name': ranking.condition.name
-                        }
+                        'description': ranking.description
+                    },
+                    'condition': {
+                        'id': ranking.condition.id,
+                        'name': ranking.condition.name
                     }
                 })
 
@@ -594,11 +589,12 @@ def delete_condition(request):
     if request.method == 'DELETE':
 
         try:
-            # Buscar parametros na url
-            id = request.GET.get('id', None)
+
+            # Carregar dados do json
+            data = json.loads(request.body.decode('utf-8'))
 
             # Buscar a condição pelo ID
-            condition = get_object_or_404(Condition, id=id)
+            condition = get_object_or_404(Condition, id=data['id'])
 
             # Deletar a condição
             condition.delete()
@@ -630,11 +626,11 @@ def disable_condition(request):
 
         try:
 
-            # Buscar parametros na url
-            id = request.GET.get('id', None)
+            # Carregar dados do json
+            data = json.loads(request.body.decode('utf-8'))
 
             # Buscar a condição pelo ID
-            condition = get_object_or_404(Condition, id=id)
+            condition = get_object_or_404(Condition, id=data['id'])
 
             # Alterar o status para False
             condition.status = False
@@ -667,11 +663,11 @@ def toggle_condition(request):
 
         try:
 
-            # Buscar parametros na url
-            id = request.GET.get('id', None)
+            # Carregar dados do json
+            data = json.loads(request.body.decode('utf-8'))
 
             # Buscar a condição pelo ID
-            condition = get_object_or_404(Condition, id=id)
+            condition = get_object_or_404(Condition, id=data['id'])
 
             # Alternar o valor do status
             condition.status = not condition.status
@@ -727,101 +723,6 @@ def list_condition(request):
             return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'error': 'Método não permitido'}, status=405)
-
-# --------------------------------------------------------------- Note ---------------------------------------------------------------
-
-@csrf_exempt
-def create_note(request):
-
-    # Verificar se o método é POST
-    if request.method == 'POST':
-
-        try:
-
-            # Carregar dados do json
-            data = json.loads(request.body.decode('utf-8'))
-
-            # Criar uma nova condição
-            note = Note.objects.create(
-                name=data['name']
-            )
-
-            # Resposta de sucesso
-            response_data = {
-                'message': 'Condição criada com sucesso',
-                'note': {
-                    'id': note.id,
-                    'name': note.name
-                }
-            }
-
-            return JsonResponse(response_data, status=201)
-
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
-
-    return JsonResponse({'error': 'Método não permitido'}, status=405)
-
-# Delete Note
-@csrf_exempt
-def delete_note(request):
-
-    # Verificar se o método é DELETE
-    if request.method == 'DELETE':
-
-        try:
-
-            # Carregar dados do json
-            data = json.loads(request.body.decode('utf-8'))
-
-            # Buscar a condição pelo ID
-            note = get_object_or_404(Note, id=data['id'])
-
-            # Deletar a condição
-            note.delete()
-
-            # Resposta de sucesso
-            response_data = {
-                'message': 'nota deletada com sucesso!'
-            }
-
-            return JsonResponse(response_data, status=200)
-
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
-
-    return JsonResponse({'error': 'Método não permitido'}, status=405)
-
-# Edit Note
-@csrf_exempt
-def edit_note(request):
-
-    # Verificar se o método é PUT
-    if request.method == 'PUT':
-
-        try:
-
-            # Carregar dados do json
-            data = json.loads(request.body.decode('utf-8'))
-
-            # Buscar a condição pelo ID
-            note = get_object_or_404(Note, id=data['id'])
-            newNote = data['note']
-            note.name = newNote
-            # Editar a condição
-            note.save()
-
-            # Resposta de sucesso
-            response_data = {
-                'message': 'nota editada com sucesso!'
-            }
-
-            return JsonResponse(response_data, status=200)
-
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
-
-    return JsonResponse({'error': 'Método não permitido'}, status=406)
 
 # --------------------------------------------------------------- MAIL ---------------------------------------------------------------
 
