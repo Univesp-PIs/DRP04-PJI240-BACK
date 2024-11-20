@@ -112,7 +112,6 @@ def create_project(request):
 
                 else:
 
-
                     # Obter a condição
                     condition = Condition.objects.get(pk=condition_id)
 
@@ -120,7 +119,7 @@ def create_project(request):
                 if ranking_id == 0:
 
                     # Criar novo ranking
-                    ranking = Ranking.objects.create(
+                    Ranking.objects.create(
                         project=project,
                         condition=condition,
                         rank=ranking_data['rank'],
@@ -213,7 +212,6 @@ def update_project(request):
                         project=project,
                         condition=condition,
                         rank=ranking_data['rank'],
-
                         last_update=ranking_data.get('last_update', None),
                         note=ranking_data['note'],
                         description=ranking_data.get('description', None)
